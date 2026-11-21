@@ -1,27 +1,75 @@
-#container {
-  text-align: center;
+.welcome-banner {
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-tertiary) 100%);
+  // El degradado es pastel en ambos modos: texto oscuro fijo para buen contraste
+  color: #1b1b1b;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+  }
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.kpi-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .kpi-icon {
+    font-size: 2.2rem;
+    opacity: 0.85;
+  }
+
+  .kpi-value {
+    font-size: 2rem;
+    font-weight: bold;
+  }
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+.section-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  // Sin color fijo: hereda el texto del tema (claro/oscuro)
+  color: var(--ion-text-color);
 }
 
-#container a {
-  text-decoration: none;
+.action-card {
+  height: 100%;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+  }
+
+  // Franja superior con el color de cada módulo
+  &.action-usuarios { border-top: 4px solid var(--ion-color-usuarios); }
+  &.action-trabajos { border-top: 4px solid var(--ion-color-trabajos); }
+  &.action-fichajes { border-top: 4px solid var(--ion-color-fichajes); }
 }
