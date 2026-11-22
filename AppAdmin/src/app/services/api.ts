@@ -18,23 +18,23 @@ export class ApiService {
   // ==========================================
 
   getUsuarios(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/usuarios`);
+    return this.http.get(`${this.apiUrl}/usuarios`, { withCredentials: true });
   }
 
   getUsuarioById(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/usuarios/${id}`);
+    return this.http.get(`${this.apiUrl}/usuarios/${id}`, { withCredentials: true });
   }
 
   addUsuario(usuario: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios`, usuario);
+    return this.http.post(`${this.apiUrl}/usuarios`, usuario, { withCredentials: true });
   }
 
   updateUsuario(id: number, usuario: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/usuarios/${id}`, usuario);
+    return this.http.put(`${this.apiUrl}/usuarios/${id}`, usuario, { withCredentials: true });
   }
 
   deleteUsuario(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/usuarios/${id}`);
+    return this.http.delete(`${this.apiUrl}/usuarios/${id}`, { withCredentials: true });
   }
 
   // ==========================================
@@ -42,23 +42,23 @@ export class ApiService {
   // ==========================================
 
   getTrabajos(): Observable<Trabajo[]> {
-    return this.http.get<Trabajo[]>(`${this.apiUrl}/trabajos`);
+    return this.http.get<Trabajo[]>(`${this.apiUrl}/trabajos`, { withCredentials: true });
   }
 
   getTrabajoById(id: number): Observable<Trabajo> {
-    return this.http.get<Trabajo>(`${this.apiUrl}/trabajos/${id}`);
+    return this.http.get<Trabajo>(`${this.apiUrl}/trabajos/${id}`, { withCredentials: true });
   }
 
   addTrabajo(trabajo: Trabajo): Observable<Trabajo> {
-    return this.http.post<Trabajo>(`${this.apiUrl}/trabajos`, trabajo);
+    return this.http.post<Trabajo>(`${this.apiUrl}/trabajos`, trabajo, { withCredentials: true });
   }
 
   updateTrabajo(id: number, trabajo: Trabajo): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.apiUrl}/trabajos/${id}`, trabajo);
+    return this.http.put<{ message: string }>(`${this.apiUrl}/trabajos/${id}`, trabajo, { withCredentials: true });
   }
 
   deleteTrabajo(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/trabajos/${id}`);
+    return this.http.delete(`${this.apiUrl}/trabajos/${id}`, { withCredentials: true });
   }
 
   // ==========================================
@@ -71,19 +71,19 @@ export class ApiService {
     if (fechaInicio) params = params.set('fechaInicio', fechaInicio);
     if (fechaFin) params = params.set('fechaFin', fechaFin);
 
-    return this.http.get<FichajeListado[]>(`${this.apiUrl}/fichajes`, { params });
+    return this.http.get<FichajeListado[]>(`${this.apiUrl}/fichajes`, { params, withCredentials: true });
   }
 
   addFichaje(fichaje: Fichaje): Observable<{ IdFichaje: number; message: string }> {
-    return this.http.post<{ IdFichaje: number; message: string }>(`${this.apiUrl}/fichajes`, fichaje);
+    return this.http.post<{ IdFichaje: number; message: string }>(`${this.apiUrl}/fichajes`, fichaje, { withCredentials: true });
   }
 
   updateFichaje(id: number, fichaje: Fichaje): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.apiUrl}/fichajes/${id}`, fichaje);
+    return this.http.put<{ message: string }>(`${this.apiUrl}/fichajes/${id}`, fichaje, { withCredentials: true });
   }
 
   getFichajeActivo(idUsuario: number): Observable<Fichaje> {
-    return this.http.get<Fichaje>(`${this.apiUrl}/fichajes/activo/${idUsuario}`);
+    return this.http.get<Fichaje>(`${this.apiUrl}/fichajes/activo/${idUsuario}`, { withCredentials: true });
   }
 
   // ==========================================
@@ -91,6 +91,6 @@ export class ApiService {
   // ==========================================
 
   getApiKeys(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/apikey`);
+    return this.http.get(`${this.apiUrl}/apikey`, { withCredentials: true });
   }
 }
