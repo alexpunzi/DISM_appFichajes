@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 // const { Middleware } = require('swagger-express-middleware');
 const http = require('http');
 const fs = require('fs');

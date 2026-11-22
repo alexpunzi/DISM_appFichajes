@@ -1,11 +1,13 @@
+require('dotenv').config();
 const mysql = require('mysql2');
 
-// Crear pool de conexiones reutilizables
+// Crear pool de conexiones reutilizables usando variables de entorno
 const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '', // Si configuraste clave en XAMPP, ponla aquí
-  database: 'api_dism',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD !== undefined ? process.env.DB_PASSWORD : '',
+  database: process.env.DB_NAME || 'api_dism',
+  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
