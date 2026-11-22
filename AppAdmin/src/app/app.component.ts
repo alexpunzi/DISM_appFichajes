@@ -1,11 +1,3 @@
-/*
- * ============================================================================
- * DISM - Práctica 1: AppAdmin
- * Archivo: app.component.ts
- * Descripción: Componente principal con barra/menú lateral e importación de iconos.
- * ============================================================================
- */
-
 import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { 

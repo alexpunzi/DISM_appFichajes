@@ -1,0 +1,19 @@
+// Menú lateral: cada opción lleva la franja de color de su módulo.
+// La opción activa se resalta con un fondo translúcido del mismo color.
+
+ion-item.menu-item {
+  border-left: 4px solid transparent;
+  --background: transparent;
+}
+
+ion-item.item-inicio   { border-left-color: var(--ion-color-primary); }
+ion-item.item-registro { border-left-color: var(--ion-color-fichajes); }
+ion-item.item-consulta { border-left-color: var(--ion-color-trabajos); }
+
+ion-item.item-inicio.menu-activo   { --background: rgba(var(--ion-color-primary-rgb), 0.18); }
+ion-item.item-registro.menu-activo { --background: rgba(var(--ion-color-fichajes-rgb), 0.22); }
+ion-item.item-consulta.menu-activo { --background: rgba(var(--ion-color-trabajos-rgb), 0.22); }
+
+ion-item.menu-activo ion-label {
+  font-weight: 600;
+}
