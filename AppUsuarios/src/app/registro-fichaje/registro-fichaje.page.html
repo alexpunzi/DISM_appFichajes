@@ -1,23 +1,64 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <ion-title>Registro fichaje</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Registro fichaje</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-item>
-    <ion-select label="Trabajo" placeholder="Selecciona un trabajo" [(ngModel)]="trabajoSeleccionado">
-      <ion-select-option *ngFor="let trabajo of trabajos" [value]="trabajo.IdTrabajo">
-        {{ trabajo.Nombre }}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
-  <ion-button expand="block" [disabled]="trabajoSeleccionado === null" (click)="registrarFichaje()">
-    Iniciar fichaje
-  </ion-button>
+<ion-content class="ion-padding">
+  <div *ngIf="cargando" class="ion-text-center">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando...</p>
+  </div>
+
+  <ng-container *ngIf="!cargando">
+    <ng-container *ngIf="!fichajeActivo; else fichajeEnCurso">
+      <ion-item>
+        <ion-select
+          label="Trabajo"
+          placeholder="Selecciona un trabajo"
+          [(ngModel)]="trabajoSeleccionado"
+        >
+          <ion-select-option
+            *ngFor="let trabajo of trabajos"
+            [value]="trabajo.IdTrabajo"
+          >
+            {{ trabajo.Nombre }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        [disabled]="trabajoSeleccionado === null || enviando"
+        (click)="registrarFichaje()"
+      >
+        Iniciar fichaje
+      </ion-button>
+    </ng-container>
+
+    <ng-template #fichajeEnCurso>
+      <h2>Fichaje en curso</h2>
+      <p>Trabajo: {{ nombreTrabajoActivo }}</p>
+      <p>
+        Entrada:
+        {{ fichajeActivo?.FechaHoraEntrada | date:'short' }}
+      </p>
+      <ion-button
+        expand="block"
+        color="danger"
+        [disabled]="enviando || !fichajeActivo?.IdFichaje"
+        (click)="finalizarFichaje()"
+      >
+        Finalizar fichaje
+      </ion-button>
+    </ng-template>
+  </ng-container>
+
+  <ion-toast
+    [isOpen]="toastAbierto"
+    [message]="toastMensaje"
+    [color]="toastColor"
+    [duration]="3000"
+    (didDismiss)="toastAbierto = false"
+  ></ion-toast>
 </ion-content>
