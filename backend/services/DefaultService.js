@@ -321,7 +321,7 @@ const getFichajeActivo = (idUsuario) => {
         console.error('Error al consultar fichaje activo:', err.message);
         return reject({ code: 500, message: 'Error al consultar fichaje activo' });
       }
-      resolve(results[0] || null);
+      resolve(results[0] || {});
     });
   });
 };
