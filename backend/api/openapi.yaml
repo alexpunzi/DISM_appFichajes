@@ -179,13 +179,6 @@ paths:
       parameters:
       - explode: true
         in: query
-        name: idUsuario
-        required: false
-        schema:
-          type: integer
-        style: form
-      - explode: true
-        in: query
         name: fechaInicio
         required: false
         schema:
@@ -244,17 +237,9 @@ paths:
           description: Fichaje cerrado exitosamente
       summary: Registrar salida de fichaje (cerrar fichaje)
       x-eov-operation-handler: controllers/DefaultController
-  /fichajes/activo/{idUsuario}:
+  /fichajes/activo:
     get:
       operationId: getFichajeActivo
-      parameters:
-      - explode: false
-        in: path
-        name: idUsuario
-        required: true
-        schema:
-          type: integer
-        style: simple
       responses:
         "200":
           content:
@@ -279,8 +264,72 @@ paths:
           description: Lista de ApiKeys
       summary: Consultar / Validar las ApiKeys existentes
       x-eov-operation-handler: controllers/DefaultController
+  /login:
+    post:
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginCredentials"
+      responses:
+        "200":
+          description: Inicio de sesión correcto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionUser"
+        "401":
+          description: Usuario o contraseña incorrectos
+      x-eov-operation-handler: controllers/DefaultController
+
+  /session:
+    get:
+      operationId: getSession
+      responses:
+        "200":
+          description: Usuario de la sesión o null si no hay sesión
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionUser"
+      x-eov-operation-handler: controllers/DefaultController
+
+  /logout:
+    post:
+      operationId: logout
+      responses:
+        "204":
+          description: Sesión cerrada
+      x-eov-operation-handler: controllers/DefaultController
+
 components:
   schemas:
+    LoginCredentials:
+      properties:
+        Usuario:
+          type: string
+        Clave:
+          type: string
+      required:
+      - Usuario
+      - Clave
+      type: object
+    SessionUser:
+      nullable: true
+      properties:
+        IdUsuario:
+          type: integer
+        Nombre:
+          type: string
+        Usuario:
+          type: string
+      required:
+      - IdUsuario
+      - Nombre
+      - Usuario
+      type: object
     Usuario:
       example:
         IdUsuario: 0

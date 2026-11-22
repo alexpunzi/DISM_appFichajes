@@ -3,6 +3,12 @@ export interface Trabajo {
   Nombre: string;
 }
 
+export interface UsuarioSesion {
+  IdUsuario: number;
+  Nombre: string;
+  Usuario: string;
+}
+
 export interface Fichaje {
   IdFichaje?: number;
   FechaHoraEntrada?: string;

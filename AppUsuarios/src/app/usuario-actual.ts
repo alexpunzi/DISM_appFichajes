@@ -1,1 +1,0 @@
-export const ID_USUARIO_PRUEBA = 1;

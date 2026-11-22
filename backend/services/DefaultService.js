@@ -42,6 +42,55 @@ const addUsuario = async (body) => {
   });
 };
 
+const login = (credentials) => {
+  const { Usuario, Clave } = credentials || {};
+
+  if (!Usuario || !Clave) {
+    return Promise.reject({ code: 400, message: 'Usuario y Clave son obligatorios' });
+  }
+
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT IdUsuario, Nombre, Usuario, Clave FROM usuarios WHERE Usuario = ?';
+    db.query(sql, [Usuario], (err, results) => {
+      if (err) {
+        console.error('Error al validar las credenciales:', err.message);
+        reject({ code: 500, message: 'Error al validar las credenciales' });
+        return;
+      }
+
+      const usuario = results[0];
+      if (!usuario) {
+        resolve(null);
+        return;
+      }
+
+      bcrypt.compare(Clave, usuario.Clave).then((coincide) => {
+        if (!coincide) {
+          resolve(null);
+          return;
+        }
+
+        const { IdUsuario, Nombre } = usuario;
+        resolve({ IdUsuario, Nombre, Usuario: usuario.Usuario });
+      }).catch(reject);
+    });
+  });
+};
+
+const getSessionUser = (idUsuario) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT IdUsuario, Nombre, Usuario FROM usuarios WHERE IdUsuario = ?';
+    db.query(sql, [idUsuario], (err, results) => {
+      if (err) {
+        console.error('Error al consultar el usuario de sesión:', err.message);
+        reject({ code: 500, message: 'Error al consultar la sesión' });
+        return;
+      }
+      resolve(results[0] || null);
+    });
+  });
+};
+
 const getUsuarioById = (id) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT IdUsuario, Nombre, Usuario FROM usuarios WHERE IdUsuario = ?';
@@ -290,16 +339,16 @@ const getFichajes = (...args) => {
   });
 };
 
-const addFichaje = (body) => {
+const addFichaje = (body, idUsuario) => {
   return new Promise((resolve, reject) => {
     const datos = body && body.body ? body.body : body;
-    const { IdUsuario, IdTrabajo, GeolocalizacionLatitud, GeolocalizacionLongitud } = datos || {};
+    const { IdTrabajo, GeolocalizacionLatitud, GeolocalizacionLongitud } = datos || {};
 
     const sql = `
       INSERT INTO fichajes (IdUsuario, IdTrabajo, FechaHoraEntrada, GeolocalizacionLatitud, GeolocalizacionLongitud)
       VALUES (?, ?, NOW(), ?, ?)
     `;
-    db.query(sql, [IdUsuario, IdTrabajo, GeolocalizacionLatitud || null, GeolocalizacionLongitud || null], (err, results) => {
+    db.query(sql, [idUsuario, IdTrabajo, GeolocalizacionLatitud || null, GeolocalizacionLongitud || null], (err, results) => {
       if (err) {
         console.error('Error al crear fichaje:', err.message);
         return reject({ code: 500, message: 'Error al crear fichaje' });
@@ -326,7 +375,7 @@ const getFichajeActivo = (idUsuario) => {
   });
 };
 
-const updateFichaje = (id) => {
+const updateFichaje = (id, idUsuario) => {
   return new Promise((resolve, reject) => {
     const idReal = (typeof id === 'object' && id !== null)
       ? (id.id || id.IdFichaje || Object.values(id)[0])
@@ -336,12 +385,15 @@ const updateFichaje = (id) => {
       UPDATE fichajes
       SET FechaHoraSalida = NOW(),
           HorasTrabajadas = TIMESTAMPDIFF(HOUR, FechaHoraEntrada, NOW())
-      WHERE IdFichaje = ?
+      WHERE IdFichaje = ? AND IdUsuario = ? AND FechaHoraSalida IS NULL
     `;
-    db.query(sql, [idReal], (err) => {
+    db.query(sql, [idReal, idUsuario], (err, results) => {
       if (err) {
         console.error('Error al cerrar fichaje:', err.message);
         return reject({ code: 500, message: 'Error al cerrar fichaje' });
+      }
+      if (results.affectedRows === 0) {
+        return reject({ code: 404, message: 'Fichaje no encontrado o no pertenece al usuario' });
       }
       resolve({ message: 'Fichaje cerrado con éxito' });
     });
@@ -359,6 +411,8 @@ const getApiKeys = () => {
 };
 
 module.exports = {
+  login,
+  getSessionUser,
   getUsuarios,
   addUsuario,
   getUsuarioById,

@@ -8,8 +8,74 @@
 
 const Controller = require('./Controller');
 const service = require('../services/DefaultService');
+const login = async (request, response) => {
+  try {
+    const usuario = await service.login(request.body);
+    if (!usuario) {
+      response.status(401).json({ message: 'Usuario o contraseña incorrectos' });
+      return;
+    }
+
+    request.session.regenerate((error) => {
+      if (error) {
+        response.status(500).json({ message: 'No se pudo iniciar la sesión' });
+        return;
+      }
+      request.session.IdUsuario = usuario.IdUsuario;
+      request.session.save((saveError) => {
+        if (saveError) {
+          response.status(500).json({ message: 'No se pudo guardar la sesión' });
+          return;
+        }
+        response.status(200).json(usuario);
+      });
+    });
+  } catch (error) {
+    Controller.sendError(response, error);
+  }
+};
+
+const getSession = async (request, response) => {
+  try {
+    if (!request.session.IdUsuario) {
+      response.status(200).json(null);
+      return;
+    }
+    const usuario = await service.getSessionUser(request.session.IdUsuario);
+    response.status(200).json(usuario);
+  } catch (error) {
+    Controller.sendError(response, error);
+  }
+};
+
+const logout = (request, response) => {
+  request.session.destroy((error) => {
+    if (error) {
+      response.status(500).json({ message: 'No se pudo cerrar la sesión' });
+      return;
+    }
+    response.clearCookie('connect.sid');
+    response.status(204).end();
+  });
+};
+
+const requireSession = (request, response) => {
+  if (!request.session.IdUsuario) {
+    response.status(401).json({ message: 'Debes iniciar sesión' });
+    return null;
+  }
+  return request.session.IdUsuario;
+};
+
 const addFichaje = async (request, response) => {
-  await Controller.handleRequest(request, response, service.addFichaje);
+  const idUsuario = requireSession(request, response);
+  if (idUsuario === null) return;
+  try {
+    const resultado = await service.addFichaje(request.body, idUsuario);
+    response.status(201).json(resultado);
+  } catch (error) {
+    Controller.sendError(response, error);
+  }
 };
 
 const addTrabajo = async (request, response) => {
@@ -33,11 +99,23 @@ const getApiKeys = async (request, response) => {
 };
 
 const getFichajeActivo = async (request, response) => {
-  await Controller.handleRequest(request, response, service.getFichajeActivo);
+  const idUsuario = requireSession(request, response);
+  if (idUsuario === null) return;
+  try {
+    const fichaje = await service.getFichajeActivo(idUsuario);
+    response.status(200).json(fichaje);
+  } catch (error) {
+    Controller.sendError(response, error);
+  }
 };
 
 const getFichajes = async (request, response) => {
-  await Controller.handleRequest(request, response, service.getFichajes);
+  const idUsuario = requireSession(request, response);
+  if (idUsuario === null) return;
+  await Controller.handleRequest(request, response, (params) => service.getFichajes({
+    ...params,
+    idUsuario,
+  }));
 };
 
 const getTrabajoById = async (request, response) => {
@@ -57,7 +135,15 @@ const getUsuarios = async (request, response) => {
 };
 
 const updateFichaje = async (request, response) => {
-  await Controller.handleRequest(request, response, service.updateFichaje);
+  const idUsuario = requireSession(request, response);
+  if (idUsuario === null) return;
+  const idFichaje = request.openapi.pathParams.id;
+  try {
+    const resultado = await service.updateFichaje(idFichaje, idUsuario);
+    response.status(200).json(resultado);
+  } catch (error) {
+    Controller.sendError(response, error);
+  }
 };
 
 const updateTrabajo = async (request, response) => {
@@ -70,6 +156,9 @@ const updateUsuario = async (request, response) => {
 
 
 module.exports = {
+  login,
+  getSession,
+  logout,
   addFichaje,
   addTrabajo,
   addUsuario,

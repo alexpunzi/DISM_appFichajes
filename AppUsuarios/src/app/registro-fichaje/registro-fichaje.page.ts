@@ -1,12 +1,12 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonSelect, IonSelectOption, IonButton, IonSpinner, IonToast } from '@ionic/angular';
-import { Fichaje, Trabajo } from '../models';
-import { ApiService } from '../services/api';
-import { ID_USUARIO_PRUEBA } from '../usuario-actual';
-import { GeolocationService } from '../services/geolocation.service';
+import { IonButton, IonContent, IonHeader, IonItem, IonSelect, IonSelectOption, IonSpinner, IonTitle, IonToast, IonToolbar } from '@ionic/angular';
 import { finalize } from 'rxjs';
+
+import type { Fichaje, Trabajo } from '../models';
+import { ApiService } from '../services/api';
+import { GeolocationService } from '../services/geolocation.service';
 
 @Component({
   selector: 'app-registro-fichaje',
@@ -25,26 +25,24 @@ export class RegistroFichajePage {
   toastMensaje = '';
   toastColor: 'success' | 'danger' | 'warning' = 'success';
 
-  constructor(
-    private apiService: ApiService,
-    private geolocationService: GeolocationService,
-    private changeDetector: ChangeDetectorRef,
-  ) {}
+  private readonly apiService = inject(ApiService);
+  private readonly geolocationService = inject(GeolocationService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
 
-  ionViewWillEnter() {
+  ionViewWillEnter(): void {
     this.cargarEstado();
   }
 
   mostrarToast(
     mensaje: string,
     color: 'success' | 'danger' | 'warning' = 'success',
-  ) {
+  ): void {
     this.toastMensaje = mensaje;
     this.toastColor = color;
     this.toastAbierto = true;
   }
 
-  cargarEstado() {
+  cargarEstado(): void {
     this.cargando = true;
 
     this.apiService.getTrabajos().subscribe({
@@ -61,8 +59,8 @@ export class RegistroFichajePage {
     });
   }
 
-  cargarFichajeActivo() {
-    this.apiService.getFichajeActivo(ID_USUARIO_PRUEBA)
+  cargarFichajeActivo(): void {
+    this.apiService.getFichajeActivo()
       .pipe(finalize(() => {
         this.cargando = false;
         this.changeDetector.markForCheck();
@@ -110,7 +108,6 @@ export class RegistroFichajePage {
     }
 
     this.apiService.addFichaje({
-      IdUsuario: ID_USUARIO_PRUEBA,
       IdTrabajo: this.trabajoSeleccionado,
       GeolocalizacionLatitud: coordenadas.latitud,
       GeolocalizacionLongitud: coordenadas.longitud,

@@ -15,7 +15,6 @@ import { finalize } from 'rxjs';
 
 import type { FichajeListado } from '../models';
 import { ApiService } from '../services/api';
-import { ID_USUARIO_PRUEBA } from '../usuario-actual';
 
 @Component({
   selector: 'app-consulta-fichajes',
@@ -56,7 +55,7 @@ export class ConsultaFichajesPage implements OnInit {
     ].join('-');
 
     this.apiService
-      .getFichajes(ID_USUARIO_PRUEBA, fechaHoy, fechaHoy)
+      .getFichajes(fechaHoy, fechaHoy)
       .pipe(
         finalize(() => {
           this.cargando = false;
