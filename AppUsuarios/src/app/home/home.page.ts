@@ -17,6 +17,7 @@ import {
   IonTitle,
   IonToast,
   IonToolbar,
+  IonMenuButton,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowForwardOutline, listOutline, logOutOutline, timeOutline } from 'ionicons/icons';
@@ -45,6 +46,7 @@ import { AuthService } from '../services/auth.service';
     IonTitle,
     IonToast,
     IonToolbar,
+    IonMenuButton,
   ],
 })
 export class HomePage {
