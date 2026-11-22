@@ -1,11 +1,3 @@
-/**
- * The DefaultController file is a very simple one, which does not need to be changed manually,
- * unless there's a case where business logic routes the request to an entity which is not
- * the service.
- * The heavy lifting of the Controller item is done in Request.js - that is where request
- * parameters are extracted and sent to the service, and where response is handled.
- */
-
 const Controller = require('./Controller');
 const service = require('../services/DefaultService');
 const login = async (request, response) => {
@@ -77,6 +69,11 @@ const adminOnly = (handler) => async (request, response, next) => {
   return handler(request, response, next);
 };
 
+const sessionOnly = (handler) => async (request, response, next) => {
+  if (!requireSession(request, response)) return;
+  return handler(request, response, next);
+}
+
 const requireSession = (request, response) => {
   if (!request.session.IdUsuario) {
     response.status(401).json({ message: 'Debes iniciar sesión' });
@@ -128,13 +125,21 @@ const getFichajeActivo = async (request, response) => {
 };
 
 const getFichajes = async (request, response) => {
+  const idUsuario = requireSession(request, response);
+  if (idUsuario === null) return; // Exige haber iniciado sesión
+
   await Controller.handleRequest(request, response, (params) => {
     const finalParams = { ...params };
-    // Si hay sesión activa y no se ha especificado explícitamente idUsuario por query (caso AppUsuarios),
-    // se restringe la búsqueda a los fichajes del usuario en sesión.
-    if (request.session && request.session.IdUsuario && !request.query?.idUsuario) {
-      finalParams.idUsuario = request.session.IdUsuario;
+
+    // Si NO es admin, FORZAR a que solo vea sus propios fichajes
+    if (!request.session.EsAdmin) {
+      finalParams.idUsuario = idUsuario;
+    } 
+    // Si ES admin y no especificó idUsuario en la query, ve los suyos por defecto
+    else if (!request.query?.idUsuario) {
+      finalParams.idUsuario = idUsuario;
     }
+
     return service.getFichajes(finalParams);
   });
 };
@@ -185,11 +190,11 @@ module.exports = {
   addUsuario: adminOnly(addUsuario),
   deleteTrabajo: adminOnly(deleteTrabajo),
   deleteUsuario: adminOnly(deleteUsuario),
-  getApiKeys,
-  getFichajeActivo,
-  getFichajes,
-  getTrabajoById,
-  getTrabajos,
+  getApiKeys: adminOnly(getApiKeys),
+  getFichajeActivo: sessionOnly(getFichajeActivo),
+  getFichajes: sessionOnly(getFichajes),
+  getTrabajoById: sessionOnly(getTrabajoById),
+  getTrabajos: sessionOnly(getTrabajos),
   getUsuarioById: adminOnly(getUsuarioById),
   getUsuarios: adminOnly(getUsuarios),
   updateFichaje,
