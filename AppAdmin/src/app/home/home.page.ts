@@ -1,14 +1,3 @@
-/*
- * ============================================================================
- * UNIVERSIDAD DE ALICANTE - Ingeniería Multimedia
- * DISM (Dispositivos e Infraestructura de Sistemas Multimedia)
- * Práctica 1: AppAdmin
- * 
- * Archivo: home.page.ts
- * Descripción: Dashboard de inicio con métricas del sistema y accesos directos.
- * ============================================================================
- */
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';

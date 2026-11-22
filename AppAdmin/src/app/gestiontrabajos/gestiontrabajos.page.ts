@@ -1,15 +1,3 @@
-/*
- * ============================================================================
- * UNIVERSIDAD DE ALICANTE - Ingeniería Multimedia
- * DISM (Dispositivos e Infraestructura de Sistemas Multimedia)
- * Práctica 1: AppAdmin
- * 
- * Archivo: gestiontrabajos.page.ts
- * Descripción: Componente para la gestión CRUD (Listar, Crear, Editar, Eliminar)
- *              de trabajos/proyectos consumiendo la API REST.
- * ============================================================================
- */
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

@@ -1,14 +1,3 @@
-/*
- * ============================================================================
- * UNIVERSIDAD DE ALICANTE - Ingeniería Multimedia
- * DISM (Dispositivos e Infraestructura de Sistemas Multimedia)
- * Práctica 1: Backend API
- * 
- * Archivo: utils/db.js
- * Descripción: Configuración de conexión mediante Pool de MySQL (mysql2).
- * ============================================================================
- */
-
 const mysql = require('mysql2');
 
 // Crear pool de conexiones reutilizables

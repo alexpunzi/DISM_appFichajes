@@ -1,14 +1,3 @@
-/*
- * ============================================================================
- * UNIVERSIDAD DE ALICANTE - Ingeniería Multimedia
- * DISM (Dispositivos e Infraestructura de Sistemas Multimedia)
- * Práctica 1: AppAdmin
- * 
- * Archivo: gestionfichajes.page.ts
- * Descripción: Componente de consulta de fichajes con mapas Leaflet.
- * ============================================================================
- */
-
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

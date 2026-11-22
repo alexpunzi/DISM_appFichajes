@@ -1,15 +1,3 @@
-/*
- * ============================================================================
- * UNIVERSIDAD DE ALICANTE - Ingeniería Multimedia
- * DISM (Dispositivos e Infraestructura de Sistemas Multimedia)
- * Práctica 1: AppAdmin
- * 
- * Archivo: gestionusuarios.page.ts
- * Descripción: Componente para la gestión CRUD de usuarios con refresco
- *              instante en pantalla usando ChangeDetectorRef.
- * ============================================================================
- */
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

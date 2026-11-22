@@ -1,17 +1,7 @@
-/*
- * ============================================================================
- * UNIVERSIDAD DE ALICANTE - Ingeniería Multimedia
- * DISM (Dispositivos e Infraestructura de Sistemas Multimedia)
- * Práctica 1: API Registro Horario
- * 
- * Archivo: api.ts (ApiService)
- * Descripción: Servicio centralizado para gestionar las peticiones HTTP (HttpClient)
- *              desde AppUsuarios hacia el backend Node.js (http://localhost:8080/v1).
- * ============================================================================
- */
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Trabajo } from '../models';
 
 @Injectable({
     providedIn: 'root'
@@ -51,8 +41,8 @@ export class ApiService {
     // --- TRABAJOS ---
     // ==========================================
 
-    getTrabajos(): Observable<any> {
-        return this.http.get(`${this.apiUrl}/trabajos`);
+    getTrabajos(): Observable<Trabajo[]> {
+        return this.http.get<Trabajo[]>(`${this.apiUrl}/trabajos`);
     }
 
     getTrabajoById(id: number): Observable<any> {

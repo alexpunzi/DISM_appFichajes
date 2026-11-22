@@ -109,6 +109,14 @@ npm start
 - API: `http://localhost:8080/v1`
 - Documentación interactiva (Swagger UI): `http://localhost:8080/api-docs`
 
+En desarrollo `SESSION_SECRET` es opcional. En producción debe definirse en el entorno:
+
+```powershell
+$env:SESSION_SECRET="clave-segura"
+$env:APP_ORIGIN="http://localhost:8100"
+npm start
+```
+
 ### 3. AppAdmin
 
 ```bash
