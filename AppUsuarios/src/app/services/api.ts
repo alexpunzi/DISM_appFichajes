@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
 
-import type { Fichaje, Trabajo, UsuarioSesion } from '../models';
+import type { Fichaje, FichajeListado, FiltrosFichajes, Trabajo, UsuarioSesion } from '../models';
 
 @Injectable({
     providedIn: 'root'
@@ -77,13 +77,13 @@ export class ApiService {
     // --- FICHAJES ---
     // ==========================================
 
-    // El simbolo ? indica que es opcional
-    getFichajes(fechaInicio?: string, fechaFin?: string): Observable<any> {
+    getFichajes(filtros: FiltrosFichajes = {}): Observable<FichajeListado[]> {
         let params = new HttpParams();
-        if (fechaInicio) params = params.set('fechaInicio', fechaInicio);
-        if (fechaFin) params = params.set('fechaFin', fechaFin);
+        if (filtros.idUsuario) params = params.set('idUsuario', filtros.idUsuario.toString());
+        if (filtros.fechaInicio) params = params.set('fechaInicio', filtros.fechaInicio);
+        if (filtros.fechaFin) params = params.set('fechaFin', filtros.fechaFin);
 
-        return this.http.get(`${this.apiUrl}/fichajes`, { params, withCredentials: true });
+        return this.http.get<FichajeListado[]>(`${this.apiUrl}/fichajes`, { params, withCredentials: true });
     }
 
     addFichaje(fichaje: Omit<Fichaje, 'IdUsuario'>): Observable<any> {

@@ -75,7 +75,12 @@ export class GestionfichajesPage implements OnInit, OnDestroy {
     const fInicio = this.filtros.fechaInicio || undefined;
     const fFin = this.filtros.fechaFin || undefined;
 
-    this.apiService.getFichajes(idUsr, fInicio, fFin).subscribe({
+    // Pasamos los filtros como un único objeto entre llaves { }
+    this.apiService.getFichajes({
+      idUsuario: idUsr,
+      fechaInicio: fInicio,
+      fechaFin: fFin
+    }).subscribe({
       next: (data: any) => {
         this.limpiarMapas(); // Eliminar mapas anteriores
         this.fichajes = Array.isArray(data) ? [...data] : [];

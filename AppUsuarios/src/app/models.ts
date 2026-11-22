@@ -24,3 +24,9 @@ export interface FichajeListado extends Fichaje {
     NombreUsuario: string | null;
     NombreTrabajo: string | null;
 }
+
+export interface FiltrosFichajes {
+  idUsuario?: number | string;
+  fechaInicio?: string;
+  fechaFin?: string;
+}

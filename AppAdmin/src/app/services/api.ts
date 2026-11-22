@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Trabajo, Fichaje, FichajeListado, UsuarioSesion } from '../models';
+import { Trabajo, Fichaje, FichajeListado, UsuarioSesion, FiltrosFichajes } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -81,11 +81,11 @@ export class ApiService {
   // --- FICHAJES ---
   // ==========================================
 
-  getFichajes(idUsuario?: number, fechaInicio?: string, fechaFin?: string): Observable<FichajeListado[]> {
+  getFichajes(filtros: FiltrosFichajes = {}): Observable<FichajeListado[]> {
     let params = new HttpParams();
-    if (idUsuario) params = params.set('idUsuario', idUsuario.toString());
-    if (fechaInicio) params = params.set('fechaInicio', fechaInicio);
-    if (fechaFin) params = params.set('fechaFin', fechaFin);
+    if (filtros.idUsuario) params = params.set('idUsuario', filtros.idUsuario.toString());
+    if (filtros.fechaInicio) params = params.set('fechaInicio', filtros.fechaInicio);
+    if (filtros.fechaFin) params = params.set('fechaFin', filtros.fechaFin);
 
     return this.http.get<FichajeListado[]>(`${this.apiUrl}/fichajes`, { params, withCredentials: true });
   }

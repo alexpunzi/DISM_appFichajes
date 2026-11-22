@@ -89,7 +89,7 @@ export class ConsultaFichajesPage implements OnInit, OnDestroy {
     ].join('-');
 
     this.apiService
-      .getFichajes(fechaHoy, fechaHoy)
+      .getFichajes({ fechaInicio: fechaHoy, fechaFin: fechaHoy }) // <-- Aquí el cambio con llaves { }
       .pipe(
         finalize(() => {
           this.cargando = false;
