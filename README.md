@@ -4,6 +4,17 @@ Sistema de **registro horario** para gestionar los fichajes de los trabajadores 
 
 > Universidad de Alicante · Ingeniería Multimedia · **DISM** (Dispositivos e Infraestructura de Sistemas Multimedia) · Curso 2026-2027
 
+## 🔌 Puertos
+
+| Servicio | Puerto | Uso |
+|---|---|---|
+| MySQL | `3306` | Base de datos `api_dism` (XAMPP) |
+| Apache HTTP | `80` | phpMyAdmin y servicios de XAMPP (opcional) |
+| Apache HTTPS | `443` | Acceso seguro a XAMPP (opcional) |
+| Servicio REST | `8080` | API `http://localhost:8080/v1` y Swagger en `/api-docs` |
+| AppAdmin | `8100` | Aplicación de administración |
+| AppUsuarios | `8101` | Aplicación de los trabajadores |
+
 ---
 
 ## 📐 Arquitectura
@@ -31,7 +42,7 @@ Las dos apps comparten datos exclusivamente a través de los servicios REST. El 
 ## 📁 Estructura del repositorio
 
 ```
-DISM_appFichajes/
+DISM_practica1.1/
 ├── AppAdmin/            # App Ionic de administración (usuarios, trabajos, fichajes)
 ├── AppUsuarios/         # App Ionic de los trabajadores (login, fichar, consultar)
 ├── backend/             # Servicios REST (Node.js + Express + OpenAPI)
@@ -135,18 +146,20 @@ npm start
 ```bash
 cd AppAdmin
 npm install
-ionic serve        # o: npm start
+npm start -- --port 8100
 ```
 
-Se abre en `http://localhost:4200`. Solo pueden entrar usuarios con `EsAdmin = 1`. La URL del backend está en `AppAdmin/src/app/services/api.ts`.
+Se abre en `http://localhost:8100`. Solo pueden entrar usuarios con `EsAdmin = 1`. La URL del backend está en `AppAdmin/src/app/services/api.ts`.
 
 ### 4. AppUsuarios
 
 ```bash
 cd AppUsuarios
 npm install
-ionic serve        # o: npm start
+npm start -- --port 8101
 ```
+
+Se abre en `http://localhost:8101`.
 
 Para que el registro de fichaje funcione, el navegador debe conceder el permiso de geolocalización.
 
