@@ -1,58 +1,71 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Registro fichaje</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Registro de fichaje</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div *ngIf="cargando" class="ion-text-center">
+  @if (cargando) {
+  <div class="ion-text-center ion-padding">
     <ion-spinner name="crescent"></ion-spinner>
     <p>Cargando...</p>
   </div>
+  } @else {
 
-  <ng-container *ngIf="!cargando">
-    <ng-container *ngIf="!fichajeActivo; else fichajeEnCurso">
+  @if (!fichajeActivo) {
+  <ion-card class="estado-card bar-fichajes">
+    <ion-card-header>
+      <ion-card-title class="text-fichajes">Nuevo fichaje</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
       <ion-item>
         <ion-select
           label="Trabajo"
+          labelPlacement="stacked"
           placeholder="Selecciona un trabajo"
           [(ngModel)]="trabajoSeleccionado"
         >
-          <ion-select-option
-            *ngFor="let trabajo of trabajos"
-            [value]="trabajo.IdTrabajo"
-          >
-            {{ trabajo.Nombre }}
-          </ion-select-option>
+          @for (trabajo of trabajos; track trabajo.IdTrabajo) {
+          <ion-select-option [value]="trabajo.IdTrabajo">{{ trabajo.Nombre }}</ion-select-option>
+          }
         </ion-select>
       </ion-item>
 
       <ion-button
         expand="block"
+        class="ion-margin-top"
         [disabled]="trabajoSeleccionado === null || enviando"
         (click)="registrarFichaje()"
       >
-        Iniciar fichaje
+        {{ enviando ? 'Registrando...' : 'Iniciar fichaje' }}
       </ion-button>
-    </ng-container>
+    </ion-card-content>
+  </ion-card>
+  } @else {
+  <ion-card class="estado-card bar-trabajos">
+    <ion-card-header>
+      <ion-card-title class="text-trabajos">
+        Fichaje en curso
+        <ion-badge color="success" class="ion-margin-start">EN CURSO</ion-badge>
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Trabajo:</strong> {{ nombreTrabajoActivo }}</p>
+      <p><strong>Entrada:</strong> {{ fichajeActivo.FechaHoraEntrada | date:'short' }}</p>
 
-    <ng-template #fichajeEnCurso>
-      <h2>Fichaje en curso</h2>
-      <p>Trabajo: {{ nombreTrabajoActivo }}</p>
-      <p>
-        Entrada:
-        {{ fichajeActivo?.FechaHoraEntrada | date:'short' }}
-      </p>
       <ion-button
         expand="block"
         color="danger"
-        [disabled]="enviando || !fichajeActivo?.IdFichaje"
+        class="ion-margin-top"
+        [disabled]="enviando || !fichajeActivo.IdFichaje"
         (click)="finalizarFichaje()"
       >
-        Finalizar fichaje
+        {{ enviando ? 'Finalizando...' : 'Finalizar fichaje' }}
       </ion-button>
-    </ng-template>
-  </ng-container>
+    </ion-card-content>
+  </ion-card>
+  }
+  }
 
   <ion-toast
     [isOpen]="toastAbierto"

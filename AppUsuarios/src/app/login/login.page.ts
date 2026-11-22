@@ -3,7 +3,20 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonTitle, IonToolbar } from '@ionic/angular';
+import {
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular';
 
 import { AuthService } from '../services/auth.service';
 
@@ -11,7 +24,22 @@ import { AuthService } from '../services/auth.service';
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
-  imports: [CommonModule, FormsModule, IonButton, IonContent, IonHeader, IonInput, IonItem, IonTitle, IonToolbar],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonContent,
+    IonHeader,
+    IonInput,
+    IonItem,
+    IonTitle,
+    IonToolbar,
+  ],
 })
 export class LoginPage {
   usuario = '';

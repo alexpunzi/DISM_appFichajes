@@ -1,44 +1,55 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Iniciar sesión</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Fichajes</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form (ngSubmit)="iniciarSesion()">
-    <ion-item>
-      <ion-input
-        label="Usuario"
-        labelPlacement="stacked"
-        name="usuario"
-        autocomplete="username"
-        [(ngModel)]="usuario"
-        required
-      ></ion-input>
-    </ion-item>
+  <div class="login-wrapper">
+    <ion-card class="login-card">
+      <ion-card-header>
+        <ion-card-title class="text-fichajes">Iniciar sesión</ion-card-title>
+        <ion-card-subtitle>Introduce tu usuario y contraseña</ion-card-subtitle>
+      </ion-card-header>
 
-    <ion-item>
-      <ion-input
-        label="Contraseña"
-        labelPlacement="stacked"
-        name="clave"
-        type="password"
-        autocomplete="current-password"
-        [(ngModel)]="clave"
-        required
-      ></ion-input>
-    </ion-item>
+      <ion-card-content>
+        <form (ngSubmit)="iniciarSesion()">
+          <ion-item>
+            <ion-input
+              label="Usuario"
+              labelPlacement="stacked"
+              name="usuario"
+              autocomplete="username"
+              [(ngModel)]="usuario"
+              required
+            ></ion-input>
+          </ion-item>
 
-    @if (mensajeError) {
-    <p class="error-message" role="alert">{{ mensajeError }}</p>
-    }
+          <ion-item>
+            <ion-input
+              label="Contraseña"
+              labelPlacement="stacked"
+              name="clave"
+              type="password"
+              autocomplete="current-password"
+              [(ngModel)]="clave"
+              required
+            ></ion-input>
+          </ion-item>
 
-    <ion-button expand="block" type="submit" [disabled]="cargando">
-      {{ cargando ? 'Comprobando...' : 'Entrar' }}
-    </ion-button>
-  </form>
+          @if (mensajeError) {
+          <p class="error-message" role="alert">{{ mensajeError }}</p>
+          }
 
-  @if (authService.sessionError) {
-  <ion-button expand="block" fill="clear" (click)="comprobarSesion()"> Reintentar comprobación </ion-button>
-  }
+          <ion-button expand="block" type="submit" class="ion-margin-top" [disabled]="cargando">
+            {{ cargando ? 'Comprobando...' : 'Entrar' }}
+          </ion-button>
+        </form>
+
+        @if (authService.sessionError) {
+        <ion-button expand="block" fill="clear" (click)="comprobarSesion()">Reintentar comprobación</ion-button>
+        }
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

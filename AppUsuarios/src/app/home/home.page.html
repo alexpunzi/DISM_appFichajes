@@ -1,21 +1,51 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title> Panel de Control Usuario </ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Panel de usuario</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarSesion()" aria-label="Cerrar sesión">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-button expand="block" routerLink="/registro-fichaje">
-    Registrar fichaje
-  </ion-button>
+  <div class="welcome-banner ion-margin-bottom">
+    <h2>¡Hola, {{ (authService.user$ | async)?.Nombre }}!</h2>
+    <p>Ficha tu entrada y salida del trabajo desde aquí y consulta tus fichajes del día.</p>
+  </div>
 
-  <ion-button expand="block" fill="outline" routerLink="/consulta-fichajes">
-    Consulta fichajes
-  </ion-button>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-md="6">
+        <ion-card button routerLink="/registro-fichaje" class="action-card action-fichajes">
+          <ion-card-header>
+            <ion-card-title class="text-fichajes">
+              <ion-icon name="time-outline"></ion-icon> Registrar fichaje
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Inicia o finaliza tu jornada en el trabajo asignado, con tu ubicación.
+            <div class="ion-text-right"><small>Ir al registro <ion-icon name="arrow-forward-outline"></ion-icon></small></div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
 
-  <ion-button expand="block" fill="clear" (click)="cerrarSesion()">
-    Cerrar sesión
-  </ion-button>
+      <ion-col size="12" size-md="6">
+        <ion-card button routerLink="/consulta-fichajes" class="action-card action-trabajos">
+          <ion-card-header>
+            <ion-card-title class="text-trabajos">
+              <ion-icon name="list-outline"></ion-icon> Consulta de fichajes
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Revisa los fichajes registrados hoy, con su entrada, salida y trabajo.
+            <div class="ion-text-right"><small>Ver fichajes <ion-icon name="arrow-forward-outline"></ion-icon></small></div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
   <ion-toast
     [isOpen]="toastAbierto"

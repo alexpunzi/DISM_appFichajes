@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonButton, IonContent, IonHeader, IonItem, IonSelect, IonSelectOption, IonSpinner, IonTitle, IonToast, IonToolbar } from '@ionic/angular';
+import { IonBadge, IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonItem, IonSelect, IonSelectOption, IonSpinner, IonTitle, IonToast, IonToolbar } from '@ionic/angular';
 import { finalize } from 'rxjs';
 
 import type { Fichaje, Trabajo } from '../models';
@@ -12,7 +12,7 @@ import { GeolocationService } from '../services/geolocation.service';
   selector: 'app-registro-fichaje',
   templateUrl: './registro-fichaje.page.html',
   styleUrls: ['./registro-fichaje.page.scss'],
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonSelectOption, IonItem, IonSelect, IonButton, IonSpinner, IonToast],
+  imports: [IonBadge, IonButton, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonItem, IonSelect, IonSelectOption, IonSpinner, IonTitle, IonToast, IonToolbar, CommonModule, FormsModule],
 })
 export class RegistroFichajePage {
   trabajoSeleccionado: number | null = null;

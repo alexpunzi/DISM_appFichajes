@@ -1,6 +1,25 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { IonButton, IonContent, IonHeader, IonTitle, IonToast, IonToolbar } from '@ionic/angular';
+import {
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonHeader,
+  IonIcon,
+  IonRow,
+  IonTitle,
+  IonToast,
+  IonToolbar,
+} from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { arrowForwardOutline, listOutline, logOutOutline, timeOutline } from 'ionicons/icons';
 
 import { AuthService } from '../services/auth.service';
 
@@ -8,14 +27,36 @@ import { AuthService } from '../services/auth.service';
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonToast, RouterLink],
+  imports: [
+    AsyncPipe,
+    RouterLink,
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonCol,
+    IonContent,
+    IonGrid,
+    IonHeader,
+    IonIcon,
+    IonRow,
+    IonTitle,
+    IonToast,
+    IonToolbar,
+  ],
 })
 export class HomePage {
   toastAbierto = false;
   toastMensaje = '';
 
-  private readonly authService = inject(AuthService);
+  readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+
+  constructor() {
+    addIcons({ arrowForwardOutline, listOutline, logOutOutline, timeOutline });
+  }
 
   cerrarSesion(): void {
     this.authService.logout().subscribe({

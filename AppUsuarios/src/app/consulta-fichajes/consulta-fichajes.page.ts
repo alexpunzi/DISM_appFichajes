@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, type OnInit } from '@angular/core';
 import {
+  IonBadge,
   IonContent,
   IonHeader,
   IonItem,
@@ -30,6 +31,7 @@ import { ApiService } from '../services/api';
     IonList,
     IonRefresher,
     IonRefresherContent,
+    IonBadge,
     IonSpinner,
     IonToast,
     CommonModule,

@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>consulta-fichajes</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Fichajes de hoy</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,33 +14,33 @@
     <ion-spinner name="crescent"></ion-spinner>
     <p>Cargando fichajes...</p>
   </div>
-  } @else { @if (fichajes.length > 0) {
-  <ion-list>
-    @for (fichaje of fichajes; track $index) {
-    <ion-item>
-      <div>
-        <p>
-          <strong>Entrada:</strong>
-          {{ fichaje.FechaHoraEntrada | date:'short' }}
-        </p>
-
-        <p>
-          <strong>Salida:</strong>
-          @if (fichaje.FechaHoraSalida) { {{ fichaje.FechaHoraSalida | date:'short' }} } @else { EN CURSO }
-        </p>
-
-        <p><strong>Trabajo:</strong> {{ fichaje.NombreTrabajo }}</p>
-        <p>
-          <strong>Coordenadas:</strong>
-          {{ fichaje.GeolocalizacionLatitud }}, {{ fichaje.GeolocalizacionLongitud }}
-        </p>
-      </div>
-    </ion-item>
-    }
-  </ion-list>
   } @else {
-  <p class="ion-padding">No hay fichajes hoy.</p>
-  } }
+    @if (fichajes.length > 0) {
+    <ion-list>
+      @for (fichaje of fichajes; track fichaje.IdFichaje) {
+      <ion-item class="fichaje-item bar-fichajes" lines="inset">
+        <div class="fichaje-contenido">
+          <h3>{{ fichaje.NombreTrabajo }}</h3>
+          <p><strong>Entrada:</strong> {{ fichaje.FechaHoraEntrada | date:'short' }}</p>
+          <p>
+            <strong>Salida:</strong>
+            @if (fichaje.FechaHoraSalida) {
+            {{ fichaje.FechaHoraSalida | date:'short' }}
+            } @else {
+            <ion-badge color="success">EN CURSO</ion-badge>
+            }
+          </p>
+          <p class="coordenadas">{{ fichaje.GeolocalizacionLatitud }}, {{ fichaje.GeolocalizacionLongitud }}</p>
+        </div>
+      </ion-item>
+      }
+    </ion-list>
+    } @else {
+    <div class="ion-padding ion-text-center vacio">
+      <p>No hay fichajes registrados hoy.</p>
+    </div>
+    }
+  }
 
   <ion-toast
     [isOpen]="toastAbierto"
