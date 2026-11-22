@@ -10,4 +10,12 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'registro-fichaje',
+    loadComponent: () => import('./registro-fichaje/registro-fichaje.page').then((m) => m.RegistroFichajePage),
+  },
+  {
+    path: 'consulta-fichajes',
+    loadComponent: () => import('./consulta-fichajes/consulta-fichajes.page').then((m) => m.ConsultaFichajesPage),
+  },
 ];

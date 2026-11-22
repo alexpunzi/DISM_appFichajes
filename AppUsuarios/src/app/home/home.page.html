@@ -1,12 +1,15 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Panel de Control Usuarios </ion-title>
+    <ion-title> Panel de Control Usuario </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="welcome-banner ion-margin-bottom">
-    <h2>¡Bienvenido al Panel de Usuario!</h2>
-    <p>Gestiona el registro de tus fichajes.</p>
-  </div>
+  <ion-button expand="block" routerLink="/registro-fichaje">
+    Registrar fichaje
+  </ion-button>
+
+  <ion-button expand="block" fill="outline" routerLink="/consulta-fichajes">
+    Consulta fichajes
+  </ion-button>
 </ion-content>
