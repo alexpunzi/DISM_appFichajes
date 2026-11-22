@@ -2,17 +2,29 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, inject, type OnInit } from '@angular/core';
 import {
   IonBadge,
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCol,
   IonContent,
+  IonGrid,
   IonHeader,
+  IonIcon,
   IonItem,
+  IonLabel,
   IonList,
+  IonMenuButton,
   IonRefresher,
   IonRefresherContent,
+  IonRow,
   IonSpinner,
   IonTitle,
   IonToast,
   IonToolbar,
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { briefcaseOutline, locationOutline, personOutline, timeOutline } from 'ionicons/icons';
 import * as L from 'leaflet';
 import { finalize } from 'rxjs';
 
@@ -24,17 +36,27 @@ import { ApiService } from '../services/api';
   templateUrl: './consulta-fichajes.page.html',
   styleUrls: ['./consulta-fichajes.page.scss'],
   imports: [
+    IonBadge,
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonCol,
     IonContent,
+    IonGrid,
     IonHeader,
-    IonTitle,
-    IonToolbar,
+    IonIcon,
     IonItem,
+    IonLabel,
     IonList,
+    IonMenuButton,
     IonRefresher,
     IonRefresherContent,
-    IonBadge,
+    IonRow,
     IonSpinner,
+    IonTitle,
     IonToast,
+    IonToolbar,
     CommonModule,
   ],
 })
@@ -52,6 +74,15 @@ export class ConsultaFichajesPage implements OnInit, OnDestroy {
 
   private readonly apiService = inject(ApiService);
   private readonly changeDetector = inject(ChangeDetectorRef);
+
+  constructor() {
+    addIcons({
+      personOutline,
+      briefcaseOutline,
+      timeOutline,
+      locationOutline,
+    });
+  }
 
   ngOnInit(): void {
     this.cargarFichajes();
@@ -78,18 +109,12 @@ export class ConsultaFichajesPage implements OnInit, OnDestroy {
     return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
   }
 
-  cargarFichajes(event?: CustomEvent<{ complete: () => void }>): void {
+    cargarFichajes(event?: CustomEvent<{ complete: () => void }>): void {
     this.cargando = true;
 
-    const hoy = new Date();
-    const fechaHoy = [
-      hoy.getFullYear(),
-      String(hoy.getMonth() + 1).padStart(2, '0'),
-      String(hoy.getDate()).padStart(2, '0'),
-    ].join('-');
-
+    // Llamamos a getFichajes() sin filtros para traer TODOS los del usuario
     this.apiService
-      .getFichajes({ fechaInicio: fechaHoy, fechaFin: fechaHoy }) // <-- Aquí el cambio con llaves { }
+      .getFichajes()
       .pipe(
         finalize(() => {
           this.cargando = false;
@@ -150,7 +175,7 @@ export class ConsultaFichajesPage implements OnInit, OnDestroy {
 
       L.marker([lat, lng], { icon: iconoMarcador })
         .addTo(mapa)
-        .bindPopup(`<b>${fichaje.NombreTrabajo ?? 'Fichaje'}</b><br>GPS: ${lat}, ${lng}`);
+        .bindPopup(`<b>${fichaje.NombreUsuario || 'Usuario ' + fichaje.IdUsuario}</b><br>GPS: ${lat}, ${lng}`);
 
       this.mapas[fichaje.IdFichaje] = mapa;
 

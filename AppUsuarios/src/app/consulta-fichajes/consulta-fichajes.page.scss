@@ -1,49 +1,25 @@
-.fichaje-item {
-  --padding-top: 12px;
-  --padding-bottom: 12px;
-  border-left-width: 4px;
-}
-
-.fichaje-contenido {
+.leaflet-map-container {
   width: 100%;
-
-  h3 {
-    margin: 0 0 6px 0;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 2px 0;
-  }
-}
-
-.coordenadas {
-  font-size: 0.8rem;
-  color: var(--ion-color-medium);
-}
-
-.vacio p {
-  color: var(--ion-color-medium);
-  font-style: italic;
-}
-
-.mapa-leaflet {
-  width: 100%;
-  height: clamp(180px, 45vw, 280px);
-  margin-top: 8px;
+  height: 200px;
   border-radius: 8px;
   border: 2px solid var(--ion-color-fichajes);
+  margin-top: 8px;
+  position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: var(--ion-color-light);
 }
 
-.sin-gps {
-  margin-top: 8px;
-  padding: 12px;
+// Placeholder sin GPS: usa los "step" de Ionic, que se adaptan al modo claro/oscuro
+.no-gps-placeholder {
+  width: 100%;
+  height: 200px;
   border-radius: 8px;
+  background-color: var(--ion-color-step-100, var(--ion-color-light));
   border: 2px dashed var(--ion-color-fichajes);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--ion-color-medium);
   font-style: italic;
-  text-align: center;
+  margin-top: 8px;
 }
