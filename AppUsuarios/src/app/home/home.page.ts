@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { IonButton, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonButton, IonContent, IonHeader, IonTitle, IonToast, IonToolbar } from '@ionic/angular';
 
 import { AuthService } from '../services/auth.service';
 
@@ -8,9 +8,12 @@ import { AuthService } from '../services/auth.service';
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton, RouterLink],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonToast, RouterLink],
 })
 export class HomePage {
+  toastAbierto = false;
+  toastMensaje = '';
+
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
@@ -19,7 +22,8 @@ export class HomePage {
       next: () => void this.router.navigateByUrl('/login'),
       error: (error: unknown) => {
         console.error('Error al cerrar sesión:', error);
-        alert('No se pudo cerrar la sesión.');
+        this.toastMensaje = 'No se pudo cerrar la sesión.';
+        this.toastAbierto = true;
       },
     });
   }

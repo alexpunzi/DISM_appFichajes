@@ -16,4 +16,12 @@
   <ion-button expand="block" fill="clear" (click)="cerrarSesion()">
     Cerrar sesión
   </ion-button>
+
+  <ion-toast
+    [isOpen]="toastAbierto"
+    [message]="toastMensaje"
+    color="danger"
+    duration="3000"
+    (didDismiss)="toastAbierto = false"
+  ></ion-toast>
 </ion-content>

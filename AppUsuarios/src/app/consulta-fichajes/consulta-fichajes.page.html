@@ -41,4 +41,12 @@
   } @else {
   <p class="ion-padding">No hay fichajes hoy.</p>
   } }
+
+  <ion-toast
+    [isOpen]="toastAbierto"
+    [message]="toastMensaje"
+    [color]="toastColor"
+    duration="3000"
+    (didDismiss)="toastAbierto = false"
+  ></ion-toast>
 </ion-content>

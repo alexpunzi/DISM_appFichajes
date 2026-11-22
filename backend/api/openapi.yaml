@@ -179,6 +179,13 @@ paths:
       parameters:
       - explode: true
         in: query
+        name: idUsuario
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: true
+        in: query
         name: fechaInicio
         required: false
         schema:

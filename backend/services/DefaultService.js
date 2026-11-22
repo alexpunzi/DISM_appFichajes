@@ -364,7 +364,14 @@ const getFichajeActivo = (idUsuario) => {
       ? (idUsuario.idUsuario || Object.values(idUsuario)[0])
       : idUsuario;
 
-    const sql = 'SELECT * FROM fichajes WHERE IdUsuario = ? AND FechaHoraSalida IS NULL ORDER BY IdFichaje DESC LIMIT 1';
+    const sql = `
+      SELECT * FROM fichajes 
+      WHERE IdUsuario = ? 
+        AND FechaHoraSalida IS NULL 
+        AND FechaHoraEntrada >= DATE_SUB(NOW(), INTERVAL 12 HOUR) 
+      ORDER BY IdFichaje DESC 
+      LIMIT 1
+    `;
     db.query(sql, [idReal], (err, results) => {
       if (err) {
         console.error('Error al consultar fichaje activo:', err.message);

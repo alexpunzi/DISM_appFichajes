@@ -9,6 +9,7 @@ import {
   IonRefresherContent,
   IonSpinner,
   IonTitle,
+  IonToast,
   IonToolbar,
 } from '@ionic/angular';
 import { finalize } from 'rxjs';
@@ -30,18 +31,32 @@ import { ApiService } from '../services/api';
     IonRefresher,
     IonRefresherContent,
     IonSpinner,
+    IonToast,
     CommonModule,
   ],
 })
 export class ConsultaFichajesPage implements OnInit {
   fichajes: FichajeListado[] = [];
   cargando = true;
+  toastAbierto = false;
+  toastMensaje = '';
+  toastColor: 'success' | 'danger' | 'warning' = 'danger';
 
   private readonly apiService = inject(ApiService);
   private readonly changeDetector = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.cargarFichajes();
+  }
+
+  mostrarToast(
+    mensaje: string,
+    color: 'success' | 'danger' | 'warning' = 'danger',
+  ): void {
+    this.toastMensaje = mensaje;
+    this.toastColor = color;
+    this.toastAbierto = true;
+    this.changeDetector.markForCheck();
   }
 
   cargarFichajes(event?: CustomEvent<{ complete: () => void }>): void {
@@ -70,7 +85,7 @@ export class ConsultaFichajesPage implements OnInit {
         },
         error: (err) => {
           console.error('Error al cargar fichajes:', err);
-          alert('No se pudieron cargar los fichajes.');
+          this.mostrarToast('No se pudieron cargar los fichajes.', 'danger');
         },
       });
   }

@@ -110,12 +110,15 @@ const getFichajeActivo = async (request, response) => {
 };
 
 const getFichajes = async (request, response) => {
-  const idUsuario = requireSession(request, response);
-  if (idUsuario === null) return;
-  await Controller.handleRequest(request, response, (params) => service.getFichajes({
-    ...params,
-    idUsuario,
-  }));
+  await Controller.handleRequest(request, response, (params) => {
+    const finalParams = { ...params };
+    // Si hay sesión activa y no se ha especificado explícitamente idUsuario por query (caso AppUsuarios),
+    // se restringe la búsqueda a los fichajes del usuario en sesión.
+    if (request.session && request.session.IdUsuario && !request.query?.idUsuario) {
+      finalParams.idUsuario = request.session.IdUsuario;
+    }
+    return service.getFichajes(finalParams);
+  });
 };
 
 const getTrabajoById = async (request, response) => {

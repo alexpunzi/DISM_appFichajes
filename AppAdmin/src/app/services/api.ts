@@ -82,8 +82,8 @@ export class ApiService {
     return this.http.put<{ message: string }>(`${this.apiUrl}/fichajes/${id}`, fichaje, { withCredentials: true });
   }
 
-  getFichajeActivo(idUsuario: number): Observable<Fichaje> {
-    return this.http.get<Fichaje>(`${this.apiUrl}/fichajes/activo/${idUsuario}`, { withCredentials: true });
+  getFichajeActivo(): Observable<Fichaje> {
+    return this.http.get<Fichaje>(`${this.apiUrl}/fichajes/activo`, { withCredentials: true });
   }
 
   // ==========================================

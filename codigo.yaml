@@ -220,16 +220,10 @@ paths:
         '200':
           description: Fichaje cerrado exitosamente
 
-  /fichajes/activo/{idUsuario}:
+  /fichajes/activo:
     get:
       summary: Obtener si existe un fichaje activo en las últimas 12 horas para un usuario
       operationId: getFichajeActivo
-      parameters:
-        - name: idUsuario
-          in: path
-          required: true
-          schema:
-            type: integer
       responses:
         '200':
           description: Devuelve el fichaje activo o un objeto vacío si no existe
@@ -254,8 +248,70 @@ paths:
                 items:
                   $ref: '#/components/schemas/ApiKey'
 
+  /login:
+    post:
+      summary: Iniciar sesión de usuario
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginCredentials'
+      responses:
+        '200':
+          description: Inicio de sesión correcto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionUser'
+        '401':
+          description: Usuario o contraseña incorrectos
+
+  /session:
+    get:
+      summary: Obtener usuario de la sesión actual
+      operationId: getSession
+      responses:
+        '200':
+          description: Usuario de la sesión o null si no hay sesión
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionUser'
+
+  /logout:
+    post:
+      summary: Cerrar sesión actual
+      operationId: logout
+      responses:
+        '204':
+          description: Sesión cerrada
+
 components:
   schemas:
+    LoginCredentials:
+      type: object
+      required:
+        - Usuario
+        - Clave
+      properties:
+        Usuario:
+          type: string
+        Clave:
+          type: string
+    SessionUser:
+      type: object
+      nullable: true
+      required:
+        - IdUsuario
+      properties:
+        IdUsuario:
+          type: integer
+        Nombre:
+          type: string
+        Usuario:
+          type: string
     Usuario:
       type: object
       properties:
