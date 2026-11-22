@@ -31,6 +31,11 @@
             }
           </p>
           <p class="coordenadas">{{ fichaje.GeolocalizacionLatitud }}, {{ fichaje.GeolocalizacionLongitud }}</p>
+          @if (tieneGps(fichaje)) {
+          <div [id]="'map-' + fichaje.IdFichaje" class="mapa-leaflet"></div>
+          } @else {
+          <div class="sin-gps">Sin datos de ubicación GPS</div>
+          }
         </div>
       </ion-item>
       }
