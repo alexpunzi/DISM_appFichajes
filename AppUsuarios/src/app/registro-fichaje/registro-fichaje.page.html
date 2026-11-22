@@ -17,4 +17,7 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
+  <ion-button expand="block" [disabled]="trabajoSeleccionado === null" (click)="registrarFichaje()">
+    Iniciar fichaje
+  </ion-button>
 </ion-content>
