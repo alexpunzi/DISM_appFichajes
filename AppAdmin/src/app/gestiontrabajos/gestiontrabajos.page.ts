@@ -21,6 +21,7 @@ import {
 import { addIcons } from 'ionicons';
 import { addOutline, trashOutline, createOutline, closeOutline, saveOutline } from 'ionicons/icons';
 import { ApiService } from '../services/api';
+import { Trabajo } from '../models';
 
 @Component({
   selector: 'app-gestiontrabajos',
@@ -36,7 +37,7 @@ import { ApiService } from '../services/api';
 export class GestiontrabajosPage implements OnInit {
 
   // Lista de trabajos desde MySQL
-  trabajos: any[] = [];
+  trabajos: Trabajo[] = [];
 
   // Control de interfaz y formulario
   mostrarFormulario: boolean = false;
@@ -123,7 +124,9 @@ export class GestiontrabajosPage implements OnInit {
   }
 
   // Borrar trabajo
-  eliminarTrabajo(id: number) {
+  eliminarTrabajo(id: number | undefined) {
+    if (id === undefined) return;
+    
     if (confirm('¿Estás seguro de que deseas eliminar este trabajo?')) {
       this.apiService.deleteTrabajo(id).subscribe({
         next: () => {

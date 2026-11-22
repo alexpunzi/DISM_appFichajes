@@ -25,6 +25,7 @@ import {
 } from 'ionicons/icons';
 import { ApiService } from '../services/api';
 import * as L from 'leaflet';
+import { FichajeListado } from '../models';
 
 @Component({
   selector: 'app-gestionfichajes',
@@ -40,7 +41,7 @@ import * as L from 'leaflet';
 })
 export class GestionfichajesPage implements OnInit, OnDestroy {
 
-  fichajes: any[] = [];
+  fichajes: FichajeListado[] = [];
   
   // Guardar instancias de los mapas para poder limpiarlas al refrescar
   private mapas: { [key: number]: L.Map } = {};
