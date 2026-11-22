@@ -50,7 +50,7 @@ const login = (credentials) => {
   }
 
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT IdUsuario, Nombre, Usuario, Clave FROM usuarios WHERE Usuario = ?';
+    const sql = 'SELECT IdUsuario, Nombre, Usuario, Clave, EsAdmin FROM usuarios WHERE Usuario = ?';
     db.query(sql, [Usuario], (err, results) => {
       if (err) {
         console.error('Error al validar las credenciales:', err.message);
@@ -71,7 +71,7 @@ const login = (credentials) => {
         }
 
         const { IdUsuario, Nombre } = usuario;
-        resolve({ IdUsuario, Nombre, Usuario: usuario.Usuario });
+        resolve({ IdUsuario, Nombre, Usuario: usuario.Usuario, EsAdmin: Boolean(usuario.EsAdmin) });
       }).catch(reject);
     });
   });
@@ -79,14 +79,15 @@ const login = (credentials) => {
 
 const getSessionUser = (idUsuario) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT IdUsuario, Nombre, Usuario FROM usuarios WHERE IdUsuario = ?';
+    const sql = 'SELECT IdUsuario, Nombre, Usuario, EsAdmin FROM usuarios WHERE IdUsuario = ?';
     db.query(sql, [idUsuario], (err, results) => {
       if (err) {
         console.error('Error al consultar el usuario de sesión:', err.message);
         reject({ code: 500, message: 'Error al consultar la sesión' });
         return;
       }
-      resolve(results[0] || null);
+      const usuario = results[0];
+      resolve(usuario ? { ...usuario, EsAdmin: Boolean(usuario.EsAdmin) } : null);
     });
   });
 };

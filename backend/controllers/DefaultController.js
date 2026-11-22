@@ -22,6 +22,7 @@ const login = async (request, response) => {
         return;
       }
       request.session.IdUsuario = usuario.IdUsuario;
+      request.session.EsAdmin = usuario.EsAdmin === true;
       request.session.save((saveError) => {
         if (saveError) {
           response.status(500).json({ message: 'No se pudo guardar la sesión' });
@@ -57,6 +58,23 @@ const logout = (request, response) => {
     response.clearCookie('connect.sid');
     response.status(204).end();
   });
+};
+
+const requireAdmin = (request, response) => {
+  if (!request.session.IdUsuario) {
+    response.status(401).json({ message: 'Debes iniciar sesión' });
+    return false;
+  }
+  if (request.session.EsAdmin !== true) {
+    response.status(403).json({ message: 'Se requieren permisos de administrador' });
+    return false;
+  }
+  return true;
+};
+
+const adminOnly = (handler) => async (request, response, next) => {
+  if (!requireAdmin(request, response)) return;
+  return handler(request, response, next);
 };
 
 const requireSession = (request, response) => {
@@ -163,18 +181,18 @@ module.exports = {
   getSession,
   logout,
   addFichaje,
-  addTrabajo,
-  addUsuario,
-  deleteTrabajo,
-  deleteUsuario,
+  addTrabajo: adminOnly(addTrabajo),
+  addUsuario: adminOnly(addUsuario),
+  deleteTrabajo: adminOnly(deleteTrabajo),
+  deleteUsuario: adminOnly(deleteUsuario),
   getApiKeys,
   getFichajeActivo,
   getFichajes,
   getTrabajoById,
   getTrabajos,
-  getUsuarioById,
-  getUsuarios,
+  getUsuarioById: adminOnly(getUsuarioById),
+  getUsuarios: adminOnly(getUsuarios),
   updateFichaje,
-  updateTrabajo,
-  updateUsuario,
+  updateTrabajo: adminOnly(updateTrabajo),
+  updateUsuario: adminOnly(updateUsuario),
 };

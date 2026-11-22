@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Panel de administración</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="iniciarSesion()">
+    <ion-item>
+      <ion-input
+        label="Usuario"
+        labelPlacement="stacked"
+        name="usuario"
+        autocomplete="username"
+        [(ngModel)]="usuario"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        label="Contraseña"
+        labelPlacement="stacked"
+        name="clave"
+        type="password"
+        autocomplete="current-password"
+        [(ngModel)]="clave"
+        required
+      ></ion-input>
+    </ion-item>
+
+    @if (mensajeError) {
+    <p class="error-message" role="alert">{{ mensajeError }}</p>
+    }
+
+    <ion-button expand="block" type="submit" [disabled]="cargando">
+      {{ cargando ? 'Comprobando...' : 'Entrar' }}
+    </ion-button>
+  </form>
+
+  @if (authService.sessionError) {
+  <ion-button expand="block" fill="clear" (click)="comprobarSesion()">Reintentar comprobación</ion-button>
+  }
+</ion-content>

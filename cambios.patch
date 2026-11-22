@@ -1,0 +1,559 @@
+diff --git a/AppAdmin/src/app/app.component.html b/AppAdmin/src/app/app.component.html
+index 33de656..476fe1f 100644
+--- a/AppAdmin/src/app/app.component.html
++++ b/AppAdmin/src/app/app.component.html
+@@ -9,6 +9,7 @@
+ 
+       <ion-content>
+         <ion-list>
++          @if (authService.isAdmin) {
+           <ion-menu-toggle auto-hide="false">
+             <ion-item class="menu-item item-inicio" routerLinkActive="menu-activo" routerDirection="root" [routerLink]="['/home']">
+               <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
+@@ -30,6 +31,12 @@
+               <ion-label>Gestión Fichajes</ion-label>
+             </ion-item>
+           </ion-menu-toggle>
++
++          <ion-item button detail="false" (click)="cerrarSesion()">
++            <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
++            <ion-label>Cerrar sesión</ion-label>
++          </ion-item>
++          }
+         </ion-list>
+       </ion-content>
+     </ion-menu>
+diff --git a/AppAdmin/src/app/app.component.ts b/AppAdmin/src/app/app.component.ts
+index 840b6b7..c6e8647 100644
+--- a/AppAdmin/src/app/app.component.ts
++++ b/AppAdmin/src/app/app.component.ts
+@@ -6,14 +6,16 @@
+  * ============================================================================
+  */
+ 
+-import { Component } from '@angular/core';
+-import { RouterModule } from '@angular/router';
++import { Component, inject } from '@angular/core';
++import { Router, RouterModule } from '@angular/router';
+ import { 
+   IonApp, IonSplitPane, IonMenu, IonHeader, IonToolbar, IonTitle, 
+   IonContent, IonList, IonItem, IonIcon, IonLabel, IonMenuToggle, IonRouterOutlet 
+ } from '@ionic/angular';
+ import { addIcons } from 'ionicons';
+-import { homeOutline, peopleOutline, briefcaseOutline, timeOutline } from 'ionicons/icons';
++import { homeOutline, peopleOutline, briefcaseOutline, timeOutline, logOutOutline } from 'ionicons/icons';
++
++import { AuthService } from './services/auth.service';
+ 
+ @Component({
+   selector: 'app-root',
+@@ -25,8 +27,18 @@ import { homeOutline, peopleOutline, briefcaseOutline, timeOutline } from 'ionic
+   ],
+ })
+ export class AppComponent {
++  readonly authService = inject(AuthService);
++  private readonly router = inject(Router);
++
+   constructor() {
+     // Registrar iconos que usaremos en el menú lateral
+-    addIcons({ homeOutline, peopleOutline, briefcaseOutline, timeOutline });
++    addIcons({ homeOutline, peopleOutline, briefcaseOutline, timeOutline, logOutOutline });
++  }
++
++  cerrarSesion(): void {
++    this.authService.logout().subscribe({
++      next: () => void this.router.navigateByUrl('/login'),
++      error: (error: unknown) => console.error('Error al cerrar sesión:', error),
++    });
+   }
+ }
+\ No newline at end of file
+diff --git a/AppAdmin/src/app/app.routes.ts b/AppAdmin/src/app/app.routes.ts
+index 510ec47..baadb3d 100644
+--- a/AppAdmin/src/app/app.routes.ts
++++ b/AppAdmin/src/app/app.routes.ts
+@@ -1,9 +1,16 @@
+ import { Routes } from '@angular/router';
+ 
++import { authGuard } from './auth.guard';
++
+ export const routes: Routes = [
++  {
++    path: 'login',
++    loadComponent: () => import('./login/login.page').then((m) => m.LoginPage),
++  },
+   {
+     path: 'home',
+     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
++    canActivate: [authGuard],
+   },
+   {
+     path: '',
+@@ -12,14 +19,21 @@ export const routes: Routes = [
+   },
+   {
+     path: 'gestionusuarios',
+-    loadComponent: () => import('./gestionusuarios/gestionusuarios.page').then( m => m.GestionusuariosPage)
++    loadComponent: () => import('./gestionusuarios/gestionusuarios.page').then((m) => m.GestionusuariosPage),
++    canActivate: [authGuard],
+   },
+   {
+     path: 'gestiontrabajos',
+-    loadComponent: () => import('./gestiontrabajos/gestiontrabajos.page').then( m => m.GestiontrabajosPage)
++    loadComponent: () => import('./gestiontrabajos/gestiontrabajos.page').then((m) => m.GestiontrabajosPage),
++    canActivate: [authGuard],
+   },
+   {
+     path: 'gestionfichajes',
+-    loadComponent: () => import('./gestionfichajes/gestionfichajes.page').then( m => m.GestionfichajesPage)
++    loadComponent: () => import('./gestionfichajes/gestionfichajes.page').then((m) => m.GestionfichajesPage),
++    canActivate: [authGuard],
++  },
++  {
++    path: '**',
++    redirectTo: 'home',
+   },
+ ];
+diff --git a/AppAdmin/src/app/auth.guard.ts b/AppAdmin/src/app/auth.guard.ts
+new file mode 100644
+index 0000000..26d892d
+--- /dev/null
++++ b/AppAdmin/src/app/auth.guard.ts
+@@ -0,0 +1,13 @@
++import { inject } from '@angular/core';
++import { CanActivateFn, Router } from '@angular/router';
++
++import { AuthService } from './services/auth.service';
++
++export const authGuard: CanActivateFn = (_route, state) => {
++  const authService = inject(AuthService);
++  const router = inject(Router);
++
++  return authService.isAdmin
++    ? true
++    : router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
++};
+diff --git a/AppAdmin/src/app/login/login.page.html b/AppAdmin/src/app/login/login.page.html
+new file mode 100644
+index 0000000..24ef7f3
+--- /dev/null
++++ b/AppAdmin/src/app/login/login.page.html
+@@ -0,0 +1,44 @@
++<ion-header>
++  <ion-toolbar color="primary">
++    <ion-title>Panel de administración</ion-title>
++  </ion-toolbar>
++</ion-header>
++
++<ion-content class="ion-padding">
++  <form (ngSubmit)="iniciarSesion()">
++    <ion-item>
++      <ion-input
++        label="Usuario"
++        labelPlacement="stacked"
++        name="usuario"
++        autocomplete="username"
++        [(ngModel)]="usuario"
++        required
++      ></ion-input>
++    </ion-item>
++
++    <ion-item>
++      <ion-input
++        label="Contraseña"
++        labelPlacement="stacked"
++        name="clave"
++        type="password"
++        autocomplete="current-password"
++        [(ngModel)]="clave"
++        required
++      ></ion-input>
++    </ion-item>
++
++    @if (mensajeError) {
++    <p class="error-message" role="alert">{{ mensajeError }}</p>
++    }
++
++    <ion-button expand="block" type="submit" [disabled]="cargando">
++      {{ cargando ? 'Comprobando...' : 'Entrar' }}
++    </ion-button>
++  </form>
++
++  @if (authService.sessionError) {
++  <ion-button expand="block" fill="clear" (click)="comprobarSesion()">Reintentar comprobación</ion-button>
++  }
++</ion-content>
+diff --git a/AppAdmin/src/app/login/login.page.scss b/AppAdmin/src/app/login/login.page.scss
+new file mode 100644
+index 0000000..56f6534
+--- /dev/null
++++ b/AppAdmin/src/app/login/login.page.scss
+@@ -0,0 +1,5 @@
++.error-message {
++  color: var(--ion-color-danger);
++  font-size: 0.9rem;
++  margin: 12px 4px;
++}
+diff --git a/AppAdmin/src/app/login/login.page.ts b/AppAdmin/src/app/login/login.page.ts
+new file mode 100644
+index 0000000..4e01bb6
+--- /dev/null
++++ b/AppAdmin/src/app/login/login.page.ts
+@@ -0,0 +1,76 @@
++import { CommonModule } from '@angular/common';
++import { HttpErrorResponse } from '@angular/common/http';
++import { Component, inject } from '@angular/core';
++import { FormsModule } from '@angular/forms';
++import { ActivatedRoute, Router } from '@angular/router';
++import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonTitle, IonToolbar } from '@ionic/angular';
++
++import { AuthService } from '../services/auth.service';
++
++@Component({
++  selector: 'app-login',
++  templateUrl: './login.page.html',
++  styleUrls: ['./login.page.scss'],
++  imports: [CommonModule, FormsModule, IonButton, IonContent, IonHeader, IonInput, IonItem, IonTitle, IonToolbar],
++})
++export class LoginPage {
++  usuario = '';
++  clave = '';
++  mensajeError: string | null = null;
++  cargando = false;
++
++  readonly authService = inject(AuthService);
++  private readonly route = inject(ActivatedRoute);
++  private readonly router = inject(Router);
++
++  constructor() {
++    this.mensajeError = this.authService.sessionError;
++    if (this.authService.isAdmin) {
++      void this.router.navigateByUrl(this.getReturnUrl());
++    }
++  }
++
++  iniciarSesion(): void {
++    if (this.cargando || !this.usuario.trim() || !this.clave) {
++      return;
++    }
++
++    this.cargando = true;
++    this.mensajeError = null;
++
++    this.authService.login({ Usuario: this.usuario.trim(), Clave: this.clave }).subscribe({
++      next: (user) => {
++        this.cargando = false;
++        if (!user.EsAdmin) {
++          // Sesión válida pero sin permisos: la cerramos y avisamos.
++          this.authService.logout().subscribe();
++          this.mensajeError = 'Tu usuario no tiene permisos de administrador.';
++          return;
++        }
++        void this.router.navigateByUrl(this.getReturnUrl());
++      },
++      error: (error: unknown) => {
++        this.cargando = false;
++        this.mensajeError =
++          error instanceof HttpErrorResponse && error.status === 401
++            ? 'Usuario o contraseña incorrectos.'
++            : 'No se pudo iniciar sesión. Inténtalo de nuevo.';
++      },
++    });
++  }
++
++  comprobarSesion(): void {
++    this.authService.checkSession().subscribe((user) => {
++      if (user?.EsAdmin) {
++        void this.router.navigateByUrl(this.getReturnUrl());
++      } else {
++        this.mensajeError = this.authService.sessionError;
++      }
++    });
++  }
++
++  private getReturnUrl(): string {
++    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
++    return returnUrl?.startsWith('/') && !returnUrl.startsWith('//') && returnUrl !== '/login' ? returnUrl : '/home';
++  }
++}
+diff --git a/AppAdmin/src/app/models.ts b/AppAdmin/src/app/models.ts
+index cc3cae7..1c9aabc 100644
+--- a/AppAdmin/src/app/models.ts
++++ b/AppAdmin/src/app/models.ts
+@@ -17,4 +17,10 @@ export interface Fichaje {
+ export interface FichajeListado extends Fichaje {
+     NombreUsuario: string | null;
+     NombreTrabajo: string | null;
+-}
+\ No newline at end of file
++}
++export interface UsuarioSesion {
++  IdUsuario: number;
++  Nombre: string;
++  Usuario: string;
++  EsAdmin: boolean;
++}
+diff --git a/AppAdmin/src/app/services/api.ts b/AppAdmin/src/app/services/api.ts
+index 1e9e456..c0c131e 100644
+--- a/AppAdmin/src/app/services/api.ts
++++ b/AppAdmin/src/app/services/api.ts
+@@ -1,7 +1,7 @@
+ import { Injectable } from '@angular/core';
+ import { HttpClient, HttpParams } from '@angular/common/http';
+ import { Observable } from 'rxjs';
+-import { Trabajo, Fichaje, FichajeListado } from '../models';
++import { Trabajo, Fichaje, FichajeListado, UsuarioSesion } from '../models';
+ 
+ @Injectable({
+   providedIn: 'root'
+@@ -13,6 +13,22 @@ export class ApiService {
+ 
+   constructor(private http: HttpClient) {}
+ 
++  // ==========================================
++  // --- SESIÓN ---
++  // ==========================================
++
++  login(credentials: { Usuario: string; Clave: string }): Observable<UsuarioSesion> {
++    return this.http.post<UsuarioSesion>(`${this.apiUrl}/login`, credentials, { withCredentials: true });
++  }
++
++  getSession(): Observable<UsuarioSesion | null> {
++    return this.http.get<UsuarioSesion | null>(`${this.apiUrl}/session`, { withCredentials: true });
++  }
++
++  logout(): Observable<void> {
++    return this.http.post<void>(`${this.apiUrl}/logout`, {}, { withCredentials: true });
++  }
++
+   // ==========================================
+   // --- USUARIOS ---
+   // ==========================================
+diff --git a/AppAdmin/src/app/services/auth.service.ts b/AppAdmin/src/app/services/auth.service.ts
+new file mode 100644
+index 0000000..e16b94f
+--- /dev/null
++++ b/AppAdmin/src/app/services/auth.service.ts
+@@ -0,0 +1,56 @@
++import { HttpErrorResponse } from '@angular/common/http';
++import { Injectable, inject } from '@angular/core';
++import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
++
++import type { UsuarioSesion } from '../models';
++import { ApiService } from './api';
++
++@Injectable({ providedIn: 'root' })
++export class AuthService {
++  private readonly apiService = inject(ApiService);
++  private readonly userSubject = new BehaviorSubject<UsuarioSesion | null>(null);
++
++  readonly user$ = this.userSubject.asObservable();
++  sessionError: string | null = null;
++
++  /** Solo los administradores pueden entrar en AppAdmin. */
++  get isAdmin(): boolean {
++    return this.userSubject.value?.EsAdmin === true;
++  }
++
++  checkSession(): Observable<UsuarioSesion | null> {
++    return this.apiService.getSession().pipe(
++      tap((user) => {
++        this.sessionError = null;
++        this.userSubject.next(user);
++      }),
++      catchError((error: unknown) => {
++        this.sessionError = this.getErrorMessage(error);
++        this.userSubject.next(null);
++        return of(null);
++      }),
++    );
++  }
++
++  login(credentials: { Usuario: string; Clave: string }): Observable<UsuarioSesion> {
++    return this.apiService.login(credentials).pipe(
++      tap((user) => {
++        this.sessionError = null;
++        this.userSubject.next(user);
++      }),
++    );
++  }
++
++  logout(): Observable<void> {
++    return this.apiService.logout().pipe(
++      tap(() => this.userSubject.next(null)),
++    );
++  }
++
++  private getErrorMessage(error: unknown): string {
++    if (error instanceof HttpErrorResponse && error.status !== 0) {
++      return 'No se pudo comprobar la sesión.';
++    }
++    return 'No se pudo conectar con el servidor.';
++  }
++}
+diff --git a/AppAdmin/src/main.ts b/AppAdmin/src/main.ts
+index 1ecec5d..34e0e53 100644
+--- a/AppAdmin/src/main.ts
++++ b/AppAdmin/src/main.ts
+@@ -1,11 +1,18 @@
++import { provideHttpClient } from '@angular/common/http';
++import { inject, provideAppInitializer } from '@angular/core';
+ import { bootstrapApplication } from '@angular/platform-browser';
+-import { RouteReuseStrategy, provideRouter, withComponentInputBinding, withPreloading, PreloadAllModules } from '@angular/router';
++import {
++  PreloadAllModules,
++  RouteReuseStrategy,
++  provideRouter,
++  withComponentInputBinding,
++  withPreloading,
++} from '@angular/router';
+ import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular';
+ 
+-import { routes } from './app/app.routes';
+ import { AppComponent } from './app/app.component';
+-
+-import { provideHttpClient } from '@angular/common/http';
++import { routes } from './app/app.routes';
++import { AuthService } from './app/services/auth.service';
+ 
+ bootstrapApplication(AppComponent, {
+   providers: [
+@@ -13,5 +20,7 @@ bootstrapApplication(AppComponent, {
+     provideIonicAngular(),
+     provideRouter(routes, withPreloading(PreloadAllModules), withComponentInputBinding()),
+     provideHttpClient(),
++    // Comprueba la sesión antes de enrutar, para que la guarda vea al administrador.
++    provideAppInitializer(() => inject(AuthService).checkSession()),
+   ],
+ });
+diff --git a/backend/api/openapi.yaml b/backend/api/openapi.yaml
+index 23cc81a..ce9fe91 100644
+--- a/backend/api/openapi.yaml
++++ b/backend/api/openapi.yaml
+@@ -332,6 +332,8 @@ components:
+           type: string
+         Usuario:
+           type: string
++        EsAdmin:
++          type: boolean
+       required:
+       - IdUsuario
+       - Nombre
+diff --git a/backend/controllers/DefaultController.js b/backend/controllers/DefaultController.js
+index 05c90a5..d09e782 100644
+--- a/backend/controllers/DefaultController.js
++++ b/backend/controllers/DefaultController.js
+@@ -22,6 +22,7 @@ const login = async (request, response) => {
+         return;
+       }
+       request.session.IdUsuario = usuario.IdUsuario;
++      request.session.EsAdmin = usuario.EsAdmin === true;
+       request.session.save((saveError) => {
+         if (saveError) {
+           response.status(500).json({ message: 'No se pudo guardar la sesión' });
+@@ -59,6 +60,23 @@ const logout = (request, response) => {
+   });
+ };
+ 
++const requireAdmin = (request, response) => {
++  if (!request.session.IdUsuario) {
++    response.status(401).json({ message: 'Debes iniciar sesión' });
++    return false;
++  }
++  if (request.session.EsAdmin !== true) {
++    response.status(403).json({ message: 'Se requieren permisos de administrador' });
++    return false;
++  }
++  return true;
++};
++
++const adminOnly = (handler) => async (request, response, next) => {
++  if (!requireAdmin(request, response)) return;
++  return handler(request, response, next);
++};
++
+ const requireSession = (request, response) => {
+   if (!request.session.IdUsuario) {
+     response.status(401).json({ message: 'Debes iniciar sesión' });
+@@ -163,18 +181,18 @@ module.exports = {
+   getSession,
+   logout,
+   addFichaje,
+-  addTrabajo,
+-  addUsuario,
+-  deleteTrabajo,
+-  deleteUsuario,
++  addTrabajo: adminOnly(addTrabajo),
++  addUsuario: adminOnly(addUsuario),
++  deleteTrabajo: adminOnly(deleteTrabajo),
++  deleteUsuario: adminOnly(deleteUsuario),
+   getApiKeys,
+   getFichajeActivo,
+   getFichajes,
+   getTrabajoById,
+   getTrabajos,
+-  getUsuarioById,
+-  getUsuarios,
++  getUsuarioById: adminOnly(getUsuarioById),
++  getUsuarios: adminOnly(getUsuarios),
+   updateFichaje,
+-  updateTrabajo,
+-  updateUsuario,
++  updateTrabajo: adminOnly(updateTrabajo),
++  updateUsuario: adminOnly(updateUsuario),
+ };
+diff --git a/backend/services/DefaultService.js b/backend/services/DefaultService.js
+index ea67618..25e8a8c 100644
+--- a/backend/services/DefaultService.js
++++ b/backend/services/DefaultService.js
+@@ -50,7 +50,7 @@ const login = (credentials) => {
+   }
+ 
+   return new Promise((resolve, reject) => {
+-    const sql = 'SELECT IdUsuario, Nombre, Usuario, Clave FROM usuarios WHERE Usuario = ?';
++    const sql = 'SELECT IdUsuario, Nombre, Usuario, Clave, EsAdmin FROM usuarios WHERE Usuario = ?';
+     db.query(sql, [Usuario], (err, results) => {
+       if (err) {
+         console.error('Error al validar las credenciales:', err.message);
+@@ -71,7 +71,7 @@ const login = (credentials) => {
+         }
+ 
+         const { IdUsuario, Nombre } = usuario;
+-        resolve({ IdUsuario, Nombre, Usuario: usuario.Usuario });
++        resolve({ IdUsuario, Nombre, Usuario: usuario.Usuario, EsAdmin: Boolean(usuario.EsAdmin) });
+       }).catch(reject);
+     });
+   });
+@@ -79,14 +79,15 @@ const login = (credentials) => {
+ 
+ const getSessionUser = (idUsuario) => {
+   return new Promise((resolve, reject) => {
+-    const sql = 'SELECT IdUsuario, Nombre, Usuario FROM usuarios WHERE IdUsuario = ?';
++    const sql = 'SELECT IdUsuario, Nombre, Usuario, EsAdmin FROM usuarios WHERE IdUsuario = ?';
+     db.query(sql, [idUsuario], (err, results) => {
+       if (err) {
+         console.error('Error al consultar el usuario de sesión:', err.message);
+         reject({ code: 500, message: 'Error al consultar la sesión' });
+         return;
+       }
+-      resolve(results[0] || null);
++      const usuario = results[0];
++      resolve(usuario ? { ...usuario, EsAdmin: Boolean(usuario.EsAdmin) } : null);
+     });
+   });
+ };
+diff --git a/backend/sql/migracion_admin.sql b/backend/sql/migracion_admin.sql
+new file mode 100644
+index 0000000..43b2514
+--- /dev/null
++++ b/backend/sql/migracion_admin.sql
+@@ -0,0 +1,9 @@
++-- Migración: rol de administrador para AppAdmin
++-- Ejecutar una vez sobre la base de datos api_dism.
++USE api_dism;
++
++ALTER TABLE usuarios
++  ADD COLUMN EsAdmin TINYINT(1) NOT NULL DEFAULT 0;
++
++-- Marca como administrador al usuario que necesite entrar en AppAdmin (ajusta el nombre de usuario):
++-- UPDATE usuarios SET EsAdmin = 1 WHERE Usuario = 'admin';

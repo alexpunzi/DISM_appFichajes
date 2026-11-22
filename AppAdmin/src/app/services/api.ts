@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Trabajo, Fichaje, FichajeListado } from '../models';
+import { Trabajo, Fichaje, FichajeListado, UsuarioSesion } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,22 @@ export class ApiService {
   private apiUrl = 'http://localhost:8080/v1';
 
   constructor(private http: HttpClient) {}
+
+  // ==========================================
+  // --- SESIÓN ---
+  // ==========================================
+
+  login(credentials: { Usuario: string; Clave: string }): Observable<UsuarioSesion> {
+    return this.http.post<UsuarioSesion>(`${this.apiUrl}/login`, credentials, { withCredentials: true });
+  }
+
+  getSession(): Observable<UsuarioSesion | null> {
+    return this.http.get<UsuarioSesion | null>(`${this.apiUrl}/session`, { withCredentials: true });
+  }
+
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/logout`, {}, { withCredentials: true });
+  }
 
   // ==========================================
   // --- USUARIOS ---

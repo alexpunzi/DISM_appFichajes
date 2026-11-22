@@ -332,6 +332,8 @@ components:
           type: string
         Usuario:
           type: string
+        EsAdmin:
+          type: boolean
       required:
       - IdUsuario
       - Nombre

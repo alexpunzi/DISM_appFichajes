@@ -18,3 +18,9 @@ export interface FichajeListado extends Fichaje {
     NombreUsuario: string | null;
     NombreTrabajo: string | null;
 }
+export interface UsuarioSesion {
+  IdUsuario: number;
+  Nombre: string;
+  Usuario: string;
+  EsAdmin: boolean;
+}

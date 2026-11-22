@@ -9,6 +9,7 @@
 
       <ion-content>
         <ion-list>
+          @if (authService.isAdmin) {
           <ion-menu-toggle auto-hide="false">
             <ion-item class="menu-item item-inicio" routerLinkActive="menu-activo" routerDirection="root" [routerLink]="['/home']">
               <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
@@ -30,6 +31,12 @@
               <ion-label>Gestión Fichajes</ion-label>
             </ion-item>
           </ion-menu-toggle>
+
+          <ion-item button detail="false" (click)="cerrarSesion()">
+            <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
+            <ion-label>Cerrar sesión</ion-label>
+          </ion-item>
+          }
         </ion-list>
       </ion-content>
     </ion-menu>

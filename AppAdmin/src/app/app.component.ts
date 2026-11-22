@@ -6,14 +6,16 @@
  * ============================================================================
  */
 
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { 
   IonApp, IonSplitPane, IonMenu, IonHeader, IonToolbar, IonTitle, 
   IonContent, IonList, IonItem, IonIcon, IonLabel, IonMenuToggle, IonRouterOutlet 
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { homeOutline, peopleOutline, briefcaseOutline, timeOutline } from 'ionicons/icons';
+import { homeOutline, peopleOutline, briefcaseOutline, timeOutline, logOutOutline } from 'ionicons/icons';
+
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -25,8 +27,18 @@ import { homeOutline, peopleOutline, briefcaseOutline, timeOutline } from 'ionic
   ],
 })
 export class AppComponent {
+  readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
   constructor() {
     // Registrar iconos que usaremos en el menú lateral
-    addIcons({ homeOutline, peopleOutline, briefcaseOutline, timeOutline });
+    addIcons({ homeOutline, peopleOutline, briefcaseOutline, timeOutline, logOutOutline });
+  }
+
+  cerrarSesion(): void {
+    this.authService.logout().subscribe({
+      next: () => void this.router.navigateByUrl('/login'),
+      error: (error: unknown) => console.error('Error al cerrar sesión:', error),
+    });
   }
 }
