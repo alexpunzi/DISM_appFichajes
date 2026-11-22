@@ -19,8 +19,13 @@
         <ion-row>
           <ion-col size="12" size-md="4">
             <ion-item>
-              <ion-label position="stacked" class="text-usuarios">ID Usuario</ion-label>
-              <ion-input type="number" [(ngModel)]="filtros.idUsuario" placeholder="Ej: 1"></ion-input>
+              <ion-label position="stacked" class="text-usuarios">Usuario</ion-label>
+              <ion-select [(ngModel)]="filtros.idUsuario" placeholder="Todos los usuarios" interface="popover">
+                <ion-select-option value="">Todos los usuarios</ion-select-option>
+                @for (u of usuarios; track u.IdUsuario) {
+                  <ion-select-option [value]="u.IdUsuario">{{ u.Nombre }}</ion-select-option>
+                }
+              </ion-select>
             </ion-item>
           </ion-col>
           <ion-col size="12" size-md="4">

@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="fichajes">
-    <ion-title>Registro de fichaje</ion-title>
+    <ion-title>Registrar fichaje</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -33,6 +33,7 @@
 
       <ion-button
         expand="block"
+        color="fichajes"
         class="ion-margin-top"
         [disabled]="trabajoSeleccionado === null || enviando"
         (click)="registrarFichaje()"

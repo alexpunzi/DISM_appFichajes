@@ -5,7 +5,7 @@ import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, 
   IonList, IonItem, IonLabel, IonButton, IonIcon, IonInput, IonCard, 
   IonCardHeader, IonCardTitle, IonCardContent, IonGrid, IonRow, IonCol,
-  IonBadge 
+  IonBadge, IonSelect, IonSelectOption
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { 
@@ -25,12 +25,13 @@ import { FichajeListado } from '../models';
     CommonModule, FormsModule, IonHeader, IonToolbar, IonTitle, IonContent, 
     IonButtons, IonMenuButton, IonList, IonItem, IonLabel, IonButton, 
     IonIcon, IonInput, IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-    IonGrid, IonRow, IonCol, IonBadge
+    IonGrid, IonRow, IonCol, IonBadge, IonSelect, IonSelectOption
   ]
 })
 export class GestionfichajesPage implements OnInit, OnDestroy {
 
   fichajes: FichajeListado[] = [];
+  usuarios: any[] = [];
   
   // Guardar instancias de los mapas para poder limpiarlas al refrescar
   private mapas: { [key: number]: L.Map } = {};
@@ -52,11 +53,25 @@ export class GestionfichajesPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.cargarUsuarios();
     this.cargarFichajes();
   }
 
   ionViewWillEnter() {
+    this.cargarUsuarios();
     this.cargarFichajes();
+  }
+
+  cargarUsuarios() {
+    this.apiService.getUsuarios().subscribe({
+      next: (data: any) => {
+        this.usuarios = Array.isArray(data) ? [...data] : [];
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar lista de usuarios para filtro:', err);
+      }
+    });
   }
 
   ngOnDestroy() {

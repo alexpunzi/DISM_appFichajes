@@ -1,16 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, inject, type OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   IonBadge,
   IonButton,
   IonButtons,
   IonCard,
   IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
   IonCol,
   IonContent,
   IonGrid,
   IonHeader,
   IonIcon,
+  IonInput,
   IonItem,
   IonLabel,
   IonList,
@@ -24,7 +28,14 @@ import {
   IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { briefcaseOutline, locationOutline, personOutline, timeOutline } from 'ionicons/icons';
+import {
+  briefcaseOutline,
+  locationOutline,
+  personOutline,
+  refreshOutline,
+  searchOutline,
+  timeOutline,
+} from 'ionicons/icons';
 import * as L from 'leaflet';
 import { finalize } from 'rxjs';
 
@@ -36,16 +47,20 @@ import { ApiService } from '../services/api';
   templateUrl: './consulta-fichajes.page.html',
   styleUrls: ['./consulta-fichajes.page.scss'],
   imports: [
+    FormsModule,
     IonBadge,
     IonButton,
     IonButtons,
     IonCard,
     IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
     IonCol,
     IonContent,
     IonGrid,
     IonHeader,
     IonIcon,
+    IonInput,
     IonItem,
     IonLabel,
     IonList,
@@ -67,6 +82,11 @@ export class ConsultaFichajesPage implements OnInit, OnDestroy {
   toastMensaje = '';
   toastColor: 'success' | 'danger' | 'warning' = 'danger';
 
+  filtros = {
+    fechaInicio: '',
+    fechaFin: '',
+  };
+
   // Mapas Leaflet activos, indexados por IdFichaje, para destruirlos al recargar
   private mapas: Record<number, L.Map> = {};
   // Observadores de tamaño: recalculan cada mapa cuando su contenedor cambia de tamaño
@@ -81,6 +101,8 @@ export class ConsultaFichajesPage implements OnInit, OnDestroy {
       briefcaseOutline,
       timeOutline,
       locationOutline,
+      searchOutline,
+      refreshOutline,
     });
   }
 
@@ -109,12 +131,17 @@ export class ConsultaFichajesPage implements OnInit, OnDestroy {
     return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
   }
 
-    cargarFichajes(event?: CustomEvent<{ complete: () => void }>): void {
+  cargarFichajes(event?: CustomEvent<{ complete: () => void }>): void {
     this.cargando = true;
 
-    // Llamamos a getFichajes() sin filtros para traer TODOS los del usuario
+    const fInicio = this.filtros.fechaInicio || undefined;
+    const fFin = this.filtros.fechaFin || undefined;
+
     this.apiService
-      .getFichajes()
+      .getFichajes({
+        fechaInicio: fInicio,
+        fechaFin: fFin,
+      })
       .pipe(
         finalize(() => {
           this.cargando = false;
@@ -136,6 +163,14 @@ export class ConsultaFichajesPage implements OnInit, OnDestroy {
           this.mostrarToast('No se pudieron cargar los fichajes.', 'danger');
         },
       });
+  }
+
+  limpiarFiltros(): void {
+    this.filtros = {
+      fechaInicio: '',
+      fechaFin: '',
+    };
+    this.cargarFichajes();
   }
 
   /** Crea un mapa Leaflet por fichaje con GPS válido. */

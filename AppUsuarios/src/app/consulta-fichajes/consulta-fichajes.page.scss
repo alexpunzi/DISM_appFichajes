@@ -2,7 +2,7 @@
   width: 100%;
   height: 200px;
   border-radius: 8px;
-  border: 2px solid var(--ion-color-fichajes);
+  border: 2px solid var(--ion-color-trabajos);
   margin-top: 8px;
   position: relative;
   isolation: isolate;
@@ -15,7 +15,7 @@
   height: 200px;
   border-radius: 8px;
   background-color: var(--ion-color-step-100, var(--ion-color-light));
-  border: 2px dashed var(--ion-color-fichajes);
+  border: 2px dashed var(--ion-color-trabajos);
   display: flex;
   align-items: center;
   justify-content: center;
