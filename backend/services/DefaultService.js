@@ -392,7 +392,7 @@ const updateFichaje = (id, idUsuario) => {
     const sql = `
       UPDATE fichajes
       SET FechaHoraSalida = NOW(),
-          HorasTrabajadas = TIMESTAMPDIFF(HOUR, FechaHoraEntrada, NOW())
+          HorasTrabajadas = ROUND(TIMESTAMPDIFF(MINUTE, FechaHoraEntrada, NOW()) / 60.0)
       WHERE IdFichaje = ? AND IdUsuario = ? AND FechaHoraSalida IS NULL
     `;
     db.query(sql, [idReal, idUsuario], (err, results) => {
