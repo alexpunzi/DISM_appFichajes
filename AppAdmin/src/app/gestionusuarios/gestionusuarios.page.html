@@ -62,7 +62,7 @@
         <ion-icon slot="start" name="person-outline" class="text-usuarios"></ion-icon>
         <ion-label>
           <h2><strong>{{ u.Nombre }}</strong></h2>
-          <p>Usuario: {{ u.Usuario || 'Sin usuario asignado' }} | ID: {{ u.IdUsuario }}</p>
+          <p>Usuario: {{ u.Usuario || 'Sin usuario asignado' }}</p>
         </ion-label>
         <ion-button (click)="editarUsuario(u)" color="usuarios" slot="end" size="small">
           <ion-icon name="create-outline"></ion-icon>
